@@ -7,7 +7,7 @@
 <script>
 
 export default {
-  name: 'header',
+  name: 'm-header',
   props: [''],
   data () {
     return {
