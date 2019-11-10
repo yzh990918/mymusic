@@ -7,6 +7,7 @@ import fastclick from 'fastclick'
 import VueLazyload from 'vue-lazyload'
 import store from './store/index'
 import './common/stylus/index.styl'
+import 'babel-polyfill'
 Vue.config.productionTip = false
 Vue.use(VueLazyload, {
   loading: require('./common/image/default.png')

@@ -3,8 +3,7 @@
     <div class="icon"></div>
     <div class="text">Chicken music</div>
     <router-link tag="div"
-                 class="user"
-                 to="#">
+                 class="user">
       <i class="icon-mine"></i>
     </router-link>
   </div>
