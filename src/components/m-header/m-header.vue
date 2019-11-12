@@ -1,7 +1,7 @@
 <template>
   <div class="m-header">
     <div class="icon"></div>
-    <div class="text">Chicken music</div>
+    <div class="text">Magic music</div>
     <router-link tag="div"
                  class="user"
                  to="#">
