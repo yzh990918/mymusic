@@ -1,22 +1,18 @@
 <template>
   <div class="recommend">
     <div class="recommend-content">
-      <div class="slide-wrapper">
-        <swiper :options="swiperOption"
-                ref="mySwiper">
-          <!-- slides -->
-          <swiper-slide v-for="(item,index) of recommends"
-                        :key="index">
+      <!-- 只有等到拿到recommends时 就正确加载出slot内容 不然浏览器拿不到slot内容 就执行了mounted钩子 -->
+      <div v-if="recommends.length"
+           class="slider-wrapper">
+        <slider>
+          <div v-for="(item,index) in recommends"
+               :key="index">
             <a :href="item.linkUrl">
-              <img width="100%"
-                   :src="item.picUrl"
+              <img :src="item.picUrl"
                    alt="">
             </a>
-          </swiper-slide>
-          <!-- Optional controls -->
-          <div class="swiper-pagination"
-               slot="pagination"></div>
-        </swiper>
+          </div>
+        </slider>
       </div>
       <div class="recommend-list">
         <h1 class="list-title">热门歌单推荐</h1>
@@ -25,27 +21,25 @@
     </div>
   </div>
 </template>
-
 <script>
-import { getRecommend } from '../../api/recommend'
+import { getRecommend, getRecommendlist } from '../../api/recommend'
+
 import { ERR_OK } from '../../api/config'
+import slider from '../base/slider/slider'
 export default {
   name: 'recommend',
   props: [''],
   data () {
     return {
       recommends: [],
-      swiperOption: {
-        pagination: '.swiper-pagination',
-        loop: true,
-        autoplay: 3000,
-        autoplayDisableOnInteraction: false
-      }
+      recommendsList: []
 
     }
   },
 
-  components: {},
+  components: {
+    slider
+  },
 
   computed: {},
 
@@ -59,8 +53,13 @@ export default {
     _getcommend () {
       getRecommend().then((res) => {
         if (res.code === ERR_OK) {
-          console.log(res.data.slider)
           this.recommends = res.data.slider
+        }
+      })
+      getRecommendlist().then((res) => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list)
+          this.recommendsList = res.data.list
         }
       })
     }

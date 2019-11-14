@@ -1,5 +1,7 @@
 export function hasClass (el, className) {
+  // todo:/(^|\\s)+(className)+(\\s|$)/
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
+  // 判断是否有class
   return reg.test(el.className)
 }
 
@@ -7,9 +9,10 @@ export function addClass (el, className) {
   if (hasClass(el, className)) {
     return
   }
-
+  // 空白间隔开
   let newClass = el.className.split(' ')
   newClass.push(className)
+  // 连接成新class
   el.className = newClass.join(' ')
 }
 
