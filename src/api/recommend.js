@@ -3,6 +3,7 @@ import {
   commonParams,
   options
 } from './config.js'
+import axios from 'axios'
 export function getRecommend () {
   const url = 'https://c.y.qq.com/musichall/fcgi-bin/fcg_yqqhomepagerecommend.fcg'
   /**
@@ -17,7 +18,7 @@ export function getRecommend () {
   return jsonp(url, data, options)
 }
 export function getRecommendlist () {
-  const url = 'https://c.y.qq.com/splcloud/fcgi-bin/fcg_get_diss_by_tag.fcg?'
+  const url = '/api/getRecommendlist'
   const data = Object.assign({}, commonParams, {
     platform: 'yqq',
     hostUin: 0,
@@ -29,5 +30,9 @@ export function getRecommendlist () {
     rnd: Math.random(),
     format: 'json'
   })
-  return jsonp(url, data, options)
+  return axios.get(url, {
+    params: data
+  }).then((res) => {
+    return Promise.resolve(res.data)
+  })
 }
