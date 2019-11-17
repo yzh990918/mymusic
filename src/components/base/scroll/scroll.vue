@@ -47,7 +47,8 @@ export default {
         return
       }
       this.scroll = new BSroll(this.$refs.wrapper, {
-        probeType: this.probeType
+        probeType: this.probeType,
+        click: this.click
       })
     },
     enable () {

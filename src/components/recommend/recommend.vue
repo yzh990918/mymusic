@@ -12,7 +12,9 @@
             <div v-for="(item,index) in recommends"
                  :key="index">
               <a :href="item.linkUrl">
-                <img @load="loadimage"
+                <!-- 添加needsclcik 阻止冲突 -->
+                <img class="needsclick"
+                     @load="loadimage"
                      :src="item.picUrl"
                      alt="">
               </a>
@@ -29,7 +31,7 @@
               <div class="icon">
                 <img width="60"
                      height="60"
-                     :src="item.imgurl"
+                     v-lazy="item.imgurl"
                      alt="">
               </div>
               <div class="text">
@@ -42,6 +44,10 @@
           </ul>
         </div>
       </div>
+      <div class="loading-wrapper"
+           v-show="!recommendsList.length">
+        <loading></loading>
+      </div>
     </scroll>
   </div>
 </template>
@@ -50,6 +56,7 @@ import { getRecommend, getRecommendlist } from '../../api/recommend'
 import scroll from '../base/scroll/scroll'
 import { ERR_OK } from '../../api/config'
 import slider from '../base/slider/slider'
+import loading from '../base/loading/loading'
 export default {
   name: 'recommend',
   props: [''],
@@ -63,7 +70,8 @@ export default {
 
   components: {
     slider,
-    scroll
+    scroll,
+    loading
   },
 
   computed: {},
@@ -82,13 +90,15 @@ export default {
           this.recommends = res.data.slider
         }
       })
-      getRecommendlist().then((res) => {
-        if (res.code === ERR_OK) {
-          this.recommendsList = res.data.list
+      setTimeout(() => {
+        getRecommendlist().then((res) => {
+          if (res.code === ERR_OK) {
+            this.recommendsList = res.data.list
+          }
         }
-      }
 
-      )
+        )
+      }, 1500)
     },
     /**
      * todo 等页面加载出图片时重新计算高度 保证scroll能计算出正确的高度
@@ -151,4 +161,9 @@ export default {
             color: $color-text
           .desc
             color: $color-text-d
+    .loading-wrapper
+      // ! 加载loading 居中显示
+      position: absolute
+      width: 100%
+      top: 50%
 </style>
