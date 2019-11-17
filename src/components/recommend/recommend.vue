@@ -1,8 +1,10 @@
 <template>
   <div class="recommend"
        ref="recommend">
-    <div>
-      <div class="recommend-content">
+    <scroll class="recommend-content"
+            :data="recommendsList"
+            ref="scroll">
+      <div>
         <!-- 只有等到拿到recommends时 就正确加载出slot内容 不然浏览器拿不到slot内容 就执行了mounted钩子 -->
         <div v-if="recommends.length"
              class="slider-wrapper">
@@ -10,7 +12,8 @@
             <div v-for="(item,index) in recommends"
                  :key="index">
               <a :href="item.linkUrl">
-                <img :src="item.picUrl"
+                <img @load="loadimage"
+                     :src="item.picUrl"
                      alt="">
               </a>
             </div>
@@ -39,12 +42,12 @@
           </ul>
         </div>
       </div>
-    </div>
+    </scroll>
   </div>
 </template>
 <script>
 import { getRecommend, getRecommendlist } from '../../api/recommend'
-import BSscroll from 'better-scroll'
+import scroll from '../base/scroll/scroll'
 import { ERR_OK } from '../../api/config'
 import slider from '../base/slider/slider'
 export default {
@@ -59,7 +62,8 @@ export default {
   },
 
   components: {
-    slider
+    slider,
+    scroll
   },
 
   computed: {},
@@ -82,15 +86,19 @@ export default {
         if (res.code === ERR_OK) {
           this.recommendsList = res.data.list
         }
-        this.$nextTick(() => {
-          console.log('true')
-          this.scroll = new BSscroll(this.$refs.recommend, {
-            click: true
-          })
-        })
       }
 
       )
+    },
+    /**
+     * todo 等页面加载出图片时重新计算高度 保证scroll能计算出正确的高度
+     */
+    loadimage () {
+      if (!this.checkLoaded) {
+        // !图片加载完 重新计算 第一张图片加载就计算高度 后面不需要重新计算
+        this.$refs.scroll.refresh()
+        this.checkLoaded = true
+      }
     }
   },
 
