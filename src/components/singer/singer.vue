@@ -69,7 +69,22 @@ export default {
           })
         )
       })
-      return map
+      // !获取有序列表 通过封装的对象遍历后是无序的
+      let hot = []
+      let singers = []
+      for (let key in map) {
+        let value = map[key]
+        if (value.title.match(/[a-zA-Z]/)) {
+          singers.push(value)
+        } else if (value.title === '热门') {
+          hot.push(value)
+        }
+      }
+      singers.sort((a, b) => {
+        //! charCodeAt 将下标转化为UniCode编码 然后比较二者之间大小进行排序
+        return a.title.charCodeAt(0) - b.title.charCodeAt(0)
+      })
+      return hot.concat(singers)
     }
   },
 
