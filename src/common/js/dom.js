@@ -17,6 +17,7 @@ export function addClass (el, className) {
 }
 
 export function getData (el, name, val) {
+  // 通过封装 data-name变量来获取对应的 prefix+name的属性值
   const prefix = 'data-'
   if (val) {
     return el.setAttribute(prefix + name, val)

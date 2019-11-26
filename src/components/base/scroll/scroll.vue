@@ -61,6 +61,13 @@ export default {
     },
     refresh () {
       this.scroll && this.scroll.refresh()
+    },
+    scrollTo () {
+      //! 因为要给better-scroll的scrollTo传入参数 所以用apply方法将this指向scroll实例 然后传入到better-scroll 很绕 apply参数必须是数组 所以用到argument模拟数组
+      this.scroll && this.scrollTo.apply(this.scroll, arguments)
+    },
+    scrollToElement () {
+      this.scroll && this.scroll.scrollToElement.apply(this.scroll, arguments)
     }
 
   },
