@@ -73,7 +73,18 @@ export default {
     OnshortcutTouchstart (e) {
       let shortcutindex = getData(e.target, 'index')
       // * 索引表构建方法：1.封装一个方法:参数为（e,name,val）如果有val没优值就get到属性 （例如dom结构中有data-index变量 那么获取这个变量的值就可以调用getAttribute('data'-name)） 所以获取下标后 调用封装好的scrollToElement切换到下标元素
-      this.$refs.listview.scrollToElement(this.$refs.listgroup[shortcutindex], 1000)
+      this._initScrollToElement(shortcutindex)
+    },
+    // todo 第二步 触发touchmove事件 手指滑动事件
+    OnshortcutTouchmove (e) {
+      let firstTouch = e.touches[0]// 获取手指第一次触碰的位置
+      this.touch.y2 = firstTouch.pageY// 获取y值
+      let delta = Math.floor((this.touch.y2 - this.touch.y1) / 18)//! 获取两者之间锚点的数量
+      let shortcutindex = delta + this.touch.startindex//! 获取下标
+      this._initScrollToElement(shortcutindex)
+    },
+    _initScrollToElement (index) {
+      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 1000)
     }
 
   },
