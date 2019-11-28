@@ -21,6 +21,10 @@ export default {
     data: {
       type: Array,
       default: null
+    },
+    listenScroll: {
+      type: Boolean,
+      default: false
     }
   },
   data () {
@@ -50,6 +54,14 @@ export default {
         probeType: this.probeType,
         click: this.click
       })
+      // todo 1.滑动监听scroll事件
+      if (this.listenScroll) {
+        // !let me =this 保留vue实例的this
+        let me = this
+        this.scroll.on('scroll', (pos) => {
+          me.$emit('scroll', pos)
+        })
+      }
     },
     enable () {
       // 启用better-scroll

@@ -1,7 +1,10 @@
 <template>
   <scroll :data="data"
           class="listview"
-          ref="listview">
+          ref="listview"
+          :listenScroll="listenScroll"
+          :probeType="probeType"
+          @scroll="handlescroll">
     <ul>
       <li v-for="(group,index) in data"
           :key="index"
@@ -26,9 +29,10 @@
         <li v-for="(item,index) of shortcutlist"
             :key="index"
             class="item"
+            :class="{'current':currentindex===index}"
             :data-index="index"
             @touchstart.stop.prevent="OnshortcutTouchstart"
-            @touchmove.stop.prevent="OnshortcutTouchstop">{{item}}</li>
+            @touchmove.stop.prevent="OnshortcutTouchmove">{{item}}</li>
       </ul>
 
     </div>
@@ -48,14 +52,23 @@ export default {
   },
   data () {
     return {
+      showactive: false,
+      scrollY: 0,
+      listheight: [],
+      currentindex: 0,
+      diff: -1
 
     }
   },
-
+  created () {
+    this.touch = {}
+    // todo 2.向子组件传值 要调用监听scroll事件
+    this.listenScroll = true
+    this.probeType = 3// 连续滚动事件一定要设置这个api
+  },
   components: {
     scroll
   },
-
   computed: {
     shortcutlist () {
       return this.data.map((group) => {
@@ -67,11 +80,13 @@ export default {
 
   beforeMount () { },
 
-  mounted () { },
-
   methods: {
+    // todo 第一步 传入index 触发touchstart事件
     OnshortcutTouchstart (e) {
       let shortcutindex = getData(e.target, 'index')
+      let firstTouch = e.touches[0]// 获取手指第一次触碰的位置
+      this.touch.y1 = firstTouch.pageY// 获取y值
+      this.touch.startindex = shortcutindex // 记录首次点击的下标
       // * 索引表构建方法：1.封装一个方法:参数为（e,name,val）如果有val没优值就get到属性 （例如dom结构中有data-index变量 那么获取这个变量的值就可以调用getAttribute('data'-name)） 所以获取下标后 调用封装好的scrollToElement切换到下标元素
       this._initScrollToElement(shortcutindex)
     },
@@ -80,16 +95,76 @@ export default {
       let firstTouch = e.touches[0]// 获取手指第一次触碰的位置
       this.touch.y2 = firstTouch.pageY// 获取y值
       let delta = Math.floor((this.touch.y2 - this.touch.y1) / 18)//! 获取两者之间锚点的数量
-      let shortcutindex = delta + this.touch.startindex//! 获取下标
+      let shortcutindex = delta + parseInt(this.touch.startindex)//! 获取下标
       this._initScrollToElement(shortcutindex)
     },
     _initScrollToElement (index) {
-      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 1000)
+      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 500)
+    },
+    // todo 3.获取左侧滚屏的y值
+    handlescroll (pos) {
+      // ! scrollY 获取实时滚屏的y值
+      this.scrollY = pos.y
+      // console.log(-this.scrollY)
+    },
+    // todo 4.计算左侧每个group各自的高度
+    _calculateheight () {
+      // 计算每个区块的高度 push到listheight
+      const singerlist = this.$refs.listgroup
+      let height = 0
+      this.listheight.push(height)
+      for (let i = 0; i < singerlist.length; i++) {
+        let item = singerlist[i]
+        height += item.clientHeight
+        this.listheight.push(height)
+      }
     }
 
   },
-
-  watch: {}
+  // todo 5.通过监听data 和scrollY实时计算区间高度和currentindex
+  watch: {
+    data () {
+      setTimeout(() => { // 数据到DOM的变化有一个延时
+        this._calculateheight()
+      }, 20)
+    },
+    scrollY (newY) {
+      const listHeight = this.listheight
+      // ? 常规方法 这种方法计算到的最后z的currentinde是23 显然不对
+      /**
+       * currentindex() {
+      for (let i = 0; i < this.listheight.length; i++) {
+        // 获取落到区间的范围
+        let height1 = this.listheight[i];
+        let height2 = this.listheight[i + 1];
+        if (!height2 || (this.scrollY >= height1 && this.scrollY < height2)) {
+          return i;
+        }
+      }
+      return 0;
+    },
+       */
+      // * 当滚动到顶部， newY > 0
+      if (newY > 0) {
+        this.currentindex = 0
+        return
+      }
+      //* 中间部分滚动
+      for (let i = 0; i < listHeight.length - 1; i++) {
+        let height1 = listHeight[i]
+        let height2 = listHeight[i + 1]
+        //  listheight的元素比索引表元素多一个 listHeight 0~23 右侧 0~22
+        if (-newY >= height1 && -newY < height2) { // !height2表示列表的最后一项
+          this.currentindex = i
+          this.diff = height2 + newY
+          // console.log(this.currentIndex)
+          return
+        }
+      }
+      //* 当滚动到底部，且-newY大于最后一个元素的上限
+      this.currentindex = listHeight.length - 2
+    }
+  }
 
 }
 
@@ -139,4 +214,6 @@ export default {
       line-height: 1
       color: $color-text-l
       font-size: $font-size-small
+      &.current
+        color: $color-theme
 </style>
