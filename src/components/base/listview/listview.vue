@@ -36,6 +36,10 @@
       </ul>
 
     </div>
+    <div class="fixedtitle"
+         v-show="fixedtitle">
+      <h1 class="title">{{fixedtitle}}</h1>
+    </div>
 
   </scroll>
 </template>
@@ -75,6 +79,12 @@ export default {
         // *map方法 得到一个经过处理后的数组 热门区 字母索引区 substr拿第一个字符
         return group.title.substr(0, 1)
       })
+    },
+    fixedtitle () {
+      if (this.scrollY > 0) {
+        return ''
+      }
+      return this.data[this.currentindex] ? this.data[this.currentindex].title : ''
     }
   },
 
@@ -216,4 +226,16 @@ export default {
       font-size: $font-size-small
       &.current
         color: $color-theme
+  .fixedtitle
+    position: absolute
+    left: 0
+    top: 0
+    width: 100%
+    .title
+      height: 30px
+      line-height: 30px
+      padding-left: 20px
+      font-size: $font-size-small
+      color: $color-text-l
+      background: $color-highlight-background
 </style>
