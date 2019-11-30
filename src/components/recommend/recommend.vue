@@ -166,4 +166,5 @@ export default {
       position: absolute
       width: 100%
       top: 50%
+      transform: translateY(-50%)
 </style>
