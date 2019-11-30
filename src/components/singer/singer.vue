@@ -33,11 +33,13 @@ export default {
 
   methods: {
     _getsingerList () {
-      getSingerList().then((res) => {
-        if (res.code === ERR_OK) {
-          this.singers = this._normallizeSinger(res.data.list)
-        }
-      })
+      setTimeout(() => {
+        getSingerList().then((res) => {
+          if (res.code === ERR_OK) {
+            this.singers = this._normallizeSinger(res.data.list)
+          }
+        })
+      }, 1000)
     },
     _normallizeSinger (list) {
       let map = {

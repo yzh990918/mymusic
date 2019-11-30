@@ -37,8 +37,13 @@
 
     </div>
     <div class="fixedtitle"
-         v-show="fixedtitle">
+         v-show="fixedtitle"
+         ref="fixed">
       <h1 class="title">{{fixedtitle}}</h1>
+    </div>
+    <div class="loading"
+         v-show="!data.length">
+      <loading></loading>
     </div>
 
   </scroll>
@@ -47,6 +52,7 @@
 <script>
 import scroll from '../scroll/scroll'
 import { getData } from '../../../common/js/dom'
+import loading from '../loading/loading'
 export default {
   name: 'listview',
   props: {
@@ -71,7 +77,8 @@ export default {
     this.probeType = 3// 连续滚动事件一定要设置这个api
   },
   components: {
-    scroll
+    scroll,
+    loading
   },
   computed: {
     shortcutlist () {
@@ -166,13 +173,25 @@ export default {
         //  listheight的元素比索引表元素多一个 listHeight 0~23 右侧 0~22
         if (-newY >= height1 && -newY < height2) { // !height2表示列表的最后一项
           this.currentindex = i
-          this.diff = height2 + newY
-          // console.log(this.currentIndex)
+          this.diff = height2 + newY // diff是上线减去scrollY
+          // console.log(this.diff)
+          // console.log(height1)
+          // console.log(height2)
           return
         }
       }
       //* 当滚动到底部，且-newY大于最后一个元素的上限
       this.currentindex = listHeight.length - 2
+    },
+    diff (newval) {
+      // *思路：通过计算出滚屏所在位置距上限的差值是否大于标题的高度 如果大于不用操作 小于的话向上平移差值的高度 这样就不会有两个标题重叠的现象 会把上一个fixedtitle向上顶
+      let fixTop = (newval > 0 && newval < 30) ? newval - 30 : 0
+      if (this.fixTop === fixTop) {
+        return
+      }
+      this.fixTop = fixTop
+      // 向上偏移
+      this.$refs.fixed.style.transform = `translate3d(0,${fixTop}px,0)`
     }
   }
 
@@ -238,4 +257,9 @@ export default {
       font-size: $font-size-small
       color: $color-text-l
       background: $color-highlight-background
+  .loading
+    position: absolute
+    width: 100%
+    top: 50%
+    transform: translateY(-50%)
 </style>

@@ -2,9 +2,9 @@
   <div class="loading">
     <img width="24"
          height="24"
-         src="./loading.gif"
+         src="./5-1503130Q911-50.gif"
          alt="">
-    <p class="desc">正在载入中...</p>
+    <p class="desc">努力加载中...</p>
   </div>
 </template>
 
