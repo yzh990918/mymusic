@@ -6,16 +6,16 @@
             ref="scroll">
       <div>
         <!-- 只有等到拿到recommends时 就正确加载出slot内容 不然浏览器拿不到slot内容 就执行了mounted钩子 -->
-        <div v-if="recommends.length"
-             class="slider-wrapper">
+        <div class="slider-wrapper">
           <slider>
-            <div v-for="(item,index) in recommends"
+            <div v-for="(item,index) in banner"
                  :key="index">
-              <a :href="item.linkUrl">
+              <a :href="item.url">
                 <!-- 添加needsclcik 阻止冲突 -->
                 <img class="needsclick"
+                     width="100%"
                      @load="loadimage"
-                     :src="item.picUrl"
+                     :src="item.imageUrl"
                      alt="">
               </a>
             </div>
@@ -52,7 +52,7 @@
   </div>
 </template>
 <script>
-import { getRecommend, getRecommendlist } from '../../api/recommend'
+import { getRecommendlist, getBanner } from '../../api/recommend'
 import scroll from '../base/scroll/scroll'
 import { ERR_OK } from '../../api/config'
 import slider from '../base/slider/slider'
@@ -62,7 +62,7 @@ export default {
   props: [''],
   data () {
     return {
-      recommends: [],
+      banner: [],
       recommendsList: []
 
     }
@@ -78,6 +78,7 @@ export default {
 
   beforeMount () { },
   mounted () {
+
   },
   created () {
     this._getcommend()
@@ -85,20 +86,20 @@ export default {
 
   methods: {
     _getcommend () {
-      getRecommend().then((res) => {
-        if (res.code === ERR_OK) {
-          this.recommends = res.data.slider
-        }
+      getBanner().then((res) => {
+        this.banner = res.data.banners
+        // console.log(res.data.banners)
       })
       setTimeout(() => {
         getRecommendlist().then((res) => {
           if (res.code === ERR_OK) {
             this.recommendsList = res.data.list
+            // console.log(this.recommendsList)
           }
         }
 
         )
-      }, 1000)
+      }, 1500)
     },
     /**
      * todo 等页面加载出图片时重新计算高度 保证scroll能计算出正确的高度

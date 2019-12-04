@@ -1,5 +1,8 @@
 import jsonp from '../common/js/jsonp'
 import {
+  HOST
+} from '../common/js/newapi'
+import {
   commonParams,
   options
 } from './config.js'
@@ -35,4 +38,8 @@ export function getRecommendlist () {
   }).then((res) => {
     return Promise.resolve(res.data)
   })
+}
+export function getBanner () {
+  const url = HOST + '/banner'
+  return axios.get(url)
 }
