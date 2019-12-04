@@ -6,7 +6,8 @@
             ref="scroll">
       <div>
         <!-- 只有等到拿到recommends时 就正确加载出slot内容 不然浏览器拿不到slot内容 就执行了mounted钩子 -->
-        <div class="slider-wrapper">
+        <div class="slider-wrapper"
+             v-if="banner.length">
           <slider>
             <div v-for="(item,index) in banner"
                  :key="index">
@@ -86,6 +87,11 @@ export default {
 
   methods: {
     _getcommend () {
+      // test().then((res) => {
+      //   console.log(res.data)
+      // }).catch((error) => {
+      //   console.log(error)
+      // })
       getBanner().then((res) => {
         this.banner = res.data.banners
         // console.log(res.data.banners)

@@ -43,3 +43,9 @@ export function getBanner () {
   const url = HOST + '/banner'
   return axios.get(url)
 }
+export function test () {
+  let param = new URLSearchParams()
+  param.append('service', 'App.Department.GetIntroduce')
+  param.append('departmentName', '软件学院')
+  return axios.post('/api', param)
+}
