@@ -12,7 +12,8 @@
           ref="listgroup">
         <h2 class="title">{{group.title}}</h2>
         <ul>
-          <li v-for="(item,index) in group.items"
+          <li @click="selectitem(item)"
+              v-for="(item,index) in group.items"
               :key="index"
               class="list-group-item">
             <img v-lazy="item.avatar"
@@ -98,6 +99,9 @@ export default {
   beforeMount () { },
 
   methods: {
+    selectitem (item) {
+      this.$emit("select", item)
+    },
     // todo 第一步 传入index 触发touchstart事件
     OnshortcutTouchstart (e) {
       let shortcutindex = getData(e.target, 'index')

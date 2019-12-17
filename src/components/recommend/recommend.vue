@@ -16,7 +16,7 @@
                 <img class="needsclick"
                      width="100%"
                      @load="loadimage"
-                     :src="item.imageUrl"
+                     :src="item.picUrl"
                      alt="">
               </a>
             </div>
