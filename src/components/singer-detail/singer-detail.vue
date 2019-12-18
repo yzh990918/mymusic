@@ -1,38 +1,31 @@
 <template>
   <transition name="change">
-    <div class="singer-detail">
-    </div>
+    <div class="singer-detail"></div>
   </transition>
-
 </template>
 
-<script> 
-
+<script>
 export default {
-  name: '',
-  props: [''],
-  data () {
-    return {
-
-    };
+  name: "",
+  props: [""],
+  data() {
+    return {};
   },
 
   components: {},
 
   computed: {},
 
-  beforeMount () { },
+  beforeMount() {},
 
-  mounted () { },
+  mounted() {},
 
   methods: {},
 
   watch: {}
-
-}
-
+};
 </script>
-<style lang='stylus' scoped>
+<style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'
 .change-enter-active, .change-leave-active
   transition: all 0.3s
