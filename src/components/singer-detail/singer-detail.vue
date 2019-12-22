@@ -5,6 +5,10 @@
 </template>
 
 <script>
+import { mapGetters } from "vuex";
+import { getSingerDetail } from "../../api/singer";
+import { ERR_OK } from "../../api/config";
+//取数据的语法堂
 export default {
   name: "",
   props: [""],
@@ -14,13 +18,32 @@ export default {
 
   components: {},
 
-  computed: {},
-
+  computed: {
+    // 拿到state里面的singer
+    ...mapGetters(["singer"])
+  },
+  created() {
+    // console.log(this.singer);
+    this._getDetail();
+  },
   beforeMount() {},
 
   mounted() {},
 
-  methods: {},
+  methods: {
+    _getDetail() {
+      if (!this.singer.id) {
+        // 如果在歌手详情页刷新 用户无法获取到数据 就回退路由
+        this.$router.push("/singer");
+        return;
+      }
+      getSingerDetail(this.singer.id).then(res => {
+        if (res.code === ERR_OK) {
+          console.log(res.data.list);
+        }
+      });
+    }
+  },
 
   watch: {}
 };

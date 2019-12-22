@@ -10,6 +10,7 @@ import { getSingerList } from "../../api/singer";
 import { ERR_OK } from "../../api//config";
 import Singer from "../../common/js/singer";
 import listview from "../base/listview/listview";
+import { mapMutations } from "vuex";
 export default {
   name: "singer",
   props: [""],
@@ -32,11 +33,17 @@ export default {
   mounted() {},
 
   methods: {
+    ...mapMutations({
+      // * 将 this.setSinger映射为 this.$store.commit(SET_SINGER) 简化代码
+      setSinger: "SET_SINGER"
+    }),
     selectSinger(singer) {
       this.$router.push({
         path: `/singer/${singer.id}`
       });
+      this.setSinger(singer);
     },
+
     _getsingerList() {
       setTimeout(() => {
         getSingerList().then(res => {
