@@ -5,29 +5,24 @@
 </template>
 
 <script>
-
 export default {
   name: 'search',
   props: [''],
   data () {
-    return {
-
-    }
+    return {}
   },
 
   components: {},
 
   computed: {},
 
-  beforeMount () { },
+  beforeMount () {},
 
-  mounted () { },
+  mounted () {},
 
   methods: {},
 
   watch: {}
-
 }
-
 </script>
-<style lang='stylus' scoped></style>
+<style lang="stylus" scoped></style>

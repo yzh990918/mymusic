@@ -2,41 +2,34 @@
   <div class="m-header">
     <div class="icon"></div>
     <div class="text">Magic music</div>
-    <router-link tag="div"
-                 class="user"
-                 to="#">
+    <router-link tag="div" class="user" to="#">
       <i class="icon-mine"></i>
     </router-link>
   </div>
 </template>
 
 <script>
-
 export default {
   name: 'm-header',
   props: [''],
   data () {
-    return {
-
-    }
+    return {}
   },
 
   components: {},
 
   computed: {},
 
-  beforeMount () { },
+  beforeMount () {},
 
-  mounted () { },
+  mounted () {},
 
   methods: {},
 
   watch: {}
-
 }
-
 </script>
-<style lang='stylus' scoped>
+<style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'
 @import '~@/common/stylus/mixin.styl'
 .m-header

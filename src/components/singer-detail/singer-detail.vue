@@ -5,48 +5,48 @@
 </template>
 
 <script>
-import { mapGetters } from "vuex";
-import { getSingerDetail } from "../../api/singer";
-import { ERR_OK } from "../../api/config";
-//取数据的语法堂
+import { mapGetters } from 'vuex'
+import { getSingerDetail } from '../../api/singer'
+import { ERR_OK } from '../../api/config'
+// 取数据的语法堂
 export default {
-  name: "",
-  props: [""],
-  data() {
-    return {};
+  name: '',
+  props: [''],
+  data () {
+    return {}
   },
 
   components: {},
 
   computed: {
     // 拿到state里面的singer
-    ...mapGetters(["singer"])
+    ...mapGetters(['singer'])
   },
-  created() {
+  created () {
     // console.log(this.singer);
-    this._getDetail();
+    this._getDetail()
   },
-  beforeMount() {},
+  beforeMount () {},
 
-  mounted() {},
+  mounted () {},
 
   methods: {
-    _getDetail() {
+    _getDetail () {
       if (!this.singer.id) {
         // 如果在歌手详情页刷新 用户无法获取到数据 就回退路由
-        this.$router.push("/singer");
-        return;
+        this.$router.push('/singer')
+        return
       }
       getSingerDetail(this.singer.id).then(res => {
         if (res.code === ERR_OK) {
-          console.log(res.data.list);
+          console.log(res.data.list)
         }
-      });
+      })
     }
   },
 
   watch: {}
-};
+}
 </script>
 <style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'

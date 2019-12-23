@@ -1,52 +1,54 @@
 <template>
-  <scroll :data="data"
-          class="listview"
-          ref="listview"
-          :listenScroll="listenScroll"
-          :probeType="probeType"
-          @scroll="handlescroll">
+  <scroll
+    :data="data"
+    class="listview"
+    ref="listview"
+    :listenScroll="listenScroll"
+    :probeType="probeType"
+    @scroll="handlescroll"
+  >
     <ul>
-      <li v-for="(group,index) in data"
-          :key="index"
-          class="list-group"
-          ref="listgroup">
-        <h2 class="title">{{group.title}}</h2>
+      <li
+        v-for="(group, index) in data"
+        :key="index"
+        class="list-group"
+        ref="listgroup"
+      >
+        <h2 class="title">{{ group.title }}</h2>
         <ul>
-          <li @click="selectitem(item)"
-              v-for="(item,index) in group.items"
-              :key="index"
-              class="list-group-item">
-            <img v-lazy="item.avatar"
-                 class="avatar"
-                 alt="">
-            <span class="name">{{item.name}}</span>
+          <li
+            @click="selectitem(item)"
+            v-for="(item, index) in group.items"
+            :key="index"
+            class="list-group-item"
+          >
+            <img v-lazy="item.avatar" class="avatar" alt="" />
+            <span class="name">{{ item.name }}</span>
           </li>
         </ul>
-
       </li>
     </ul>
     <div class="list-shortcut">
       <ul>
-        <li v-for="(item,index) of shortcutlist"
-            :key="index"
-            class="item"
-            :class="{'current':currentindex===index}"
-            :data-index="index"
-            @touchstart.stop.prevent="OnshortcutTouchstart"
-            @touchmove.stop.prevent="OnshortcutTouchmove">{{item}}</li>
+        <li
+          v-for="(item, index) of shortcutlist"
+          :key="index"
+          class="item"
+          :class="{ current: currentindex === index }"
+          :data-index="index"
+          @touchstart.stop.prevent="OnshortcutTouchstart"
+          @touchmove.stop.prevent="OnshortcutTouchmove"
+        >
+          {{ item }}
+        </li>
       </ul>
-
     </div>
-    <div class="fixedtitle"
-         v-show="fixedtitle"
-         ref="fixed">
-      <h1 class="title">{{fixedtitle}}</h1>
+    <div class="fixedtitle" v-show="fixedtitle" ref="fixed">
+      <h1 class="title">{{ fixedtitle }}</h1>
     </div>
-    <div class="loading"
-         v-show="!data.length">
+    <div class="loading" v-show="!data.length">
       <loading></loading>
     </div>
-
   </scroll>
 </template>
 
@@ -68,14 +70,13 @@ export default {
       listheight: [],
       currentindex: 0,
       diff: -1
-
     }
   },
   created () {
     this.touch = {}
     // todo 2.向子组件传值 要调用监听scroll事件
     this.listenScroll = true
-    this.probeType = 3// 连续滚动事件一定要设置这个api
+    this.probeType = 3 // 连续滚动事件一定要设置这个api
   },
   components: {
     scroll,
@@ -83,7 +84,7 @@ export default {
   },
   computed: {
     shortcutlist () {
-      return this.data.map((group) => {
+      return this.data.map(group => {
         // *map方法 得到一个经过处理后的数组 热门区 字母索引区 substr拿第一个字符
         return group.title.substr(0, 1)
       })
@@ -92,31 +93,33 @@ export default {
       if (this.scrollY > 0) {
         return ''
       }
-      return this.data[this.currentindex] ? this.data[this.currentindex].title : ''
+      return this.data[this.currentindex]
+        ? this.data[this.currentindex].title
+        : ''
     }
   },
 
-  beforeMount () { },
+  beforeMount () {},
 
   methods: {
     selectitem (item) {
-      this.$emit("select", item)
+      this.$emit('select', item)
     },
     // todo 第一步 传入index 触发touchstart事件
     OnshortcutTouchstart (e) {
       let shortcutindex = getData(e.target, 'index')
-      let firstTouch = e.touches[0]// 获取手指第一次触碰的位置
-      this.touch.y1 = firstTouch.pageY// 获取y值
+      let firstTouch = e.touches[0] // 获取手指第一次触碰的位置
+      this.touch.y1 = firstTouch.pageY // 获取y值
       this.touch.startindex = shortcutindex // 记录首次点击的下标
       // * 索引表构建方法：1.封装一个方法:参数为（e,name,val）如果有val没优值就get到属性 （例如dom结构中有data-index变量 那么获取这个变量的值就可以调用getAttribute('data'-name)） 所以获取下标后 调用封装好的scrollToElement切换到下标元素
       this._initScrollToElement(shortcutindex)
     },
     // todo 第二步 触发touchmove事件 手指滑动事件
     OnshortcutTouchmove (e) {
-      let firstTouch = e.touches[0]// 获取手指第一次触碰的位置
-      this.touch.y2 = firstTouch.pageY// 获取y值
-      let delta = Math.floor((this.touch.y2 - this.touch.y1) / 18)//! 获取两者之间锚点的数量
-      let shortcutindex = delta + parseInt(this.touch.startindex)//! 获取下标
+      let firstTouch = e.touches[0] // 获取手指第一次触碰的位置
+      this.touch.y2 = firstTouch.pageY // 获取y值
+      let delta = Math.floor((this.touch.y2 - this.touch.y1) / 18) //! 获取两者之间锚点的数量
+      let shortcutindex = delta + parseInt(this.touch.startindex) //! 获取下标
       this._initScrollToElement(shortcutindex)
     },
     _initScrollToElement (index) {
@@ -140,12 +143,12 @@ export default {
         this.listheight.push(height)
       }
     }
-
   },
   // todo 5.通过监听data 和scrollY实时计算区间高度和currentindex
   watch: {
     data () {
-      setTimeout(() => { // 数据到DOM的变化有一个延时
+      setTimeout(() => {
+        // 数据到DOM的变化有一个延时
         this._calculateheight()
       }, 20)
     },
@@ -175,7 +178,8 @@ export default {
         let height1 = listHeight[i]
         let height2 = listHeight[i + 1]
         //  listheight的元素比索引表元素多一个 listHeight 0~23 右侧 0~22
-        if (-newY >= height1 && -newY < height2) { // !height2表示列表的最后一项
+        if (-newY >= height1 && -newY < height2) {
+          // !height2表示列表的最后一项
           this.currentindex = i
           this.diff = height2 + newY // diff是上线减去scrollY
           // console.log(this.diff)
@@ -189,7 +193,7 @@ export default {
     },
     diff (newval) {
       // *思路：通过计算出滚屏所在位置距上限的差值是否大于标题的高度 如果大于不用操作 小于的话向上平移差值的高度 这样就不会有两个标题重叠的现象 会把上一个fixedtitle向上顶
-      let fixTop = (newval > 0 && newval < 30) ? newval - 30 : 0
+      let fixTop = newval > 0 && newval < 30 ? newval - 30 : 0
       if (this.fixTop === fixTop) {
         return
       }
@@ -198,11 +202,9 @@ export default {
       this.$refs.fixed.style.transform = `translate3d(0,${fixTop}px,0)`
     }
   }
-
 }
-
 </script>
-<style lang='stylus' scoped>
+<style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'
 .listview
   position: relative
