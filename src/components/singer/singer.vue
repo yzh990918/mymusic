@@ -6,11 +6,11 @@
 </template>
 
 <script>
-import { getSingerList } from '../../api/singer'
-import { ERR_OK } from '../../api//config'
+import {getSingers} from '../../api/singer'
 import Singer from '../../common/js/singer'
 import listview from '../base/listview/listview'
 import { mapMutations } from 'vuex'
+const pinyin = require('pinyin')
 export default {
   name: 'singer',
   props: [''],
@@ -46,10 +46,20 @@ export default {
 
     _getsingerList () {
       setTimeout(() => {
-        getSingerList().then(res => {
-          if (res.code === ERR_OK) {
-            this.singers = this._normallizeSinger(res.data.list)
-          }
+        getSingers().then(res => {
+          // if (res.code === ERR_OK) {
+          //   this.singers = this._normallizeSinger(res.data.artists)
+          // }
+          let s = res.data.artists
+          //! 用pinyin依赖包将singername的首字母提炼出来作为item.initial 接下来就是封装数据为热门 和常规区域
+          s.map((item) => {
+            let py = pinyin(item.name[0], {
+              style: pinyin.STYLE_FIRST_LETTER
+            })
+            item.initial = py[0][0].toUpperCase()
+          })
+          this.singers = this._normallizeSinger(s)
+          console.log(this.singers)
         })
       }, 1000)
     },
@@ -65,13 +75,15 @@ export default {
           map.hot.items.push(
             new Singer({
               // todo 热门区歌手对象
-              id: item.Fsinger_mid,
-              name: item.Fsinger_name
+              id: item.id,
+              name: item.name,
+              avatar: item.img1v1Url,
+              aliaName: item.alias.join(' / ')
             })
           )
         }
         // * 歌手区list
-        const key = item.Findex
+        const key = item.initial
         if (!map[key]) {
           map[key] = {
             // todo map[key]：A.B.C...区块 如果没有key就生成一个list对象 往每个map[key]里面push Singer对象
@@ -82,8 +94,10 @@ export default {
         map[key].items.push(
           new Singer({
             // todo 热门区歌手对象
-            id: item.Fsinger_mid,
-            name: item.Fsinger_name
+            id: item.id,
+            name: item.name,
+            avatar: item.img1v1Url,
+            aliaName: item.alias[0]
           })
         )
       })

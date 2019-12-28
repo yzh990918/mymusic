@@ -32,14 +32,14 @@
               <div class="icon">
                 <img width="60"
                      height="60"
-                     v-lazy="item.imgurl"
+                     v-lazy="item.picUrl"
                      alt="">
               </div>
               <div class="text">
                 <h2 class="name"
-                    v-html="item.creator.name"></h2>
+                    v-html="item.name"></h2>
                 <p class="desc"
-                   v-html="item.dissname"></p>
+                   v-html="item.copywriter"></p>
               </div>
             </li>
           </ul>
@@ -53,9 +53,8 @@
   </div>
 </template>
 <script>
-import { getRecommendlist, getBanner } from '../../api/recommend'
+import {getRecommendlist, getBanner} from '../../api/recommend'
 import scroll from '../base/scroll/scroll'
-import { ERR_OK } from '../../api/config'
 import slider from '../base/slider/slider'
 import loading from '../base/loading/loading'
 export default {
@@ -93,10 +92,8 @@ export default {
       })
       setTimeout(() => {
         getRecommendlist().then((res) => {
-          if (res.code === ERR_OK) {
-            this.recommendsList = res.data.list
-            // console.log(this.recommendsList)
-          }
+          this.recommendsList = res.data.result
+          console.log(this.recommendsList)
         }
 
         )
@@ -161,6 +158,9 @@ export default {
           .name
             margin-bottom: 10px
             color: $color-text
+            overflow hidden
+            white-space nowrap
+            text-overflow ellipsis
           .desc
             color: $color-text-d
     .loading-wrapper

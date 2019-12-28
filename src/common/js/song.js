@@ -1,73 +1,75 @@
 /* eslint-disable */
-import {
-    getLyric
-} from 'api/song'
-import {
-    ERR_OK
-} from 'api/config'
-import {
-    Base64
-} from 'js-base64'
+// import {
+//     getLyric
+// } from 'api/song'
+// import {
+//     ERR_OK
+// } from 'api/config'
+// import {
+//     Base64
+// } from 'js-base64'
 
 export default class Song {
     constructor({
         id,
-        mid,
+        // mid,
         singer,
         name,
         album,
-        duration,
+        // duration,
         image,
-        url
+        mv
+        // url
     }) {
         this.id = id
-        this.mid = mid
+        // this.mid = mid
         this.singer = singer
         this.name = name
         this.album = album
-        this.duration = duration
+        // this.duration = duration
         this.image = image
-        this.url = url
+        this.mv=mv
+        // this.url = url
     }
 
-    getLyric() {
-        if (this.lyric) {
-            return Promise.resolve(this.lyric)
-        }
+    // getLyric() {
+    //     if (this.lyric) {
+    //         return Promise.resolve(this.lyric)
+    //     }
 
-        return new Promise((resolve, reject) => {
-            getLyric(this.mid).then((res) => {
-                if (res.retcode === ERR_OK) {
-                    this.lyric = Base64.decode(res.lyric)
-                    resolve(this.lyric)
-                } else {
-                    reject('no lyric')
-                }
-            })
-        })
-    }
+    //     return new Promise((resolve, reject) => {
+    //         getLyric(this.mid).then((res) => {
+    //             if (res.retcode === ERR_OK) {
+    //                 this.lyric = Base64.decode(res.lyric)
+    //                 resolve(this.lyric)
+    //             } else {
+    //                 reject('no lyric')
+    //             }
+    //         })
+    //     })
+    // }
 }
 
-export function createSong(musicData) {
+export function createSong(music) {
     return new Song({
-        id: musicData.songid,
-        mid: musicData.songmid,
-        singer: filterSinger(musicData.singer),
-        name: musicData.songname,
-        album: musicData.albumname,
-        duration: musicData.interval,
-        image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.albummid}.jpg?max_age=2592000`,
-        url: `http://ws.stream.qqmusic.qq.com/${musicData.songid}.m4a?fromtag=46`
+      id:music.id,
+      singer:filterSinger(music.ar),
+      name:music.name,
+      album:music.al.name,//专辑名
+      image: music.al.picUrl,
+      mv:music.mv
     })
 }
-
+/**
+ *
+ *
+ * @param {*} singer 歌手
+ * @returns 如果出现一首歌曲多个人演唱的情况 map方法返回一个新数组 里面是处理好的name数组 用/隔开
+ */
 function filterSinger(singer) {
-    let ret = []
-    if (!singer) {
-        return ''
-    }
-    singer.forEach((s) => {
-        ret.push(s.name)
-    })
-    return ret.join('/')
+ let name=[]
+ name=singer.map((item)=>{
+   return item.name
+ })
+ return name.join('/')
 }

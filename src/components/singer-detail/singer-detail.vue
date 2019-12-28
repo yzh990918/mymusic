@@ -8,12 +8,15 @@
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from '../../api/singer'
 import { ERR_OK } from '../../api/config'
+import {createSong} from '../../common/js/song'
 // 取数据的语法堂
 export default {
   name: '',
   props: [''],
   data () {
-    return {}
+    return {
+      songs: []
+    }
   },
 
   components: {},
@@ -38,10 +41,19 @@ export default {
         return
       }
       getSingerDetail(this.singer.id).then(res => {
-        if (res.code === ERR_OK) {
-          console.log(res.data.list)
+        if (res.status === ERR_OK) {
+          // console.log(res.data.list)
+          this.songs = this._normalizeSong(res.data.hotSongs)
+          console.log(this.songs)
         }
       })
+    },
+    _normalizeSong (list) {
+      let ret = []
+      list.forEach((item) => {
+        ret.push(createSong(item))
+      })
+      return ret
     }
   },
 
