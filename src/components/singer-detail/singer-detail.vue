@@ -8,12 +8,15 @@
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from '../../api/singer'
 import { ERR_OK } from '../../api/config'
+import {createSong} from '../../common/js/song'
 // 取数据的语法堂
 export default {
   name: '',
   props: [''],
   data () {
-    return {}
+    return {
+      song: []
+    }
   },
 
   components: {},
@@ -39,9 +42,21 @@ export default {
       }
       getSingerDetail(this.singer.id).then(res => {
         if (res.code === ERR_OK) {
-          console.log(res.data.list)
+          // console.log(res.data.list)
+          this.song = this.normalizeSonge(res.data.list)
+          console.log(this.song)
         }
       })
+    },
+    normalizeSonge (list) {
+      let ret = []
+      list.forEach((item) => {
+        let {musicData} = item// 解构赋值 只拿musicData
+        if (musicData.songid && musicData.albummid) {
+          ret.push(createSong(musicData))//! 工厂模式将数据传入 封装好song对象后再push进ret数组
+        }
+      })
+      return ret
     }
   },
 
