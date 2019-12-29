@@ -1,6 +1,9 @@
 <template>
   <transition name="change">
-    <div class="singer-detail"></div>
+    <div class="singer-detail">
+       <musiclist></musiclist>
+    </div>
+
   </transition>
 </template>
 
@@ -9,6 +12,7 @@ import { mapGetters } from 'vuex'
 import { getSingerDetail } from '../../api/singer'
 import { ERR_OK } from '../../api/config'
 import {createSong} from '../../common/js/song'
+import musiclist from '../music-list/music-list'
 // 取数据的语法堂
 export default {
   name: '',
@@ -19,7 +23,7 @@ export default {
     }
   },
 
-  components: {},
+  components: {musiclist},
 
   computed: {
     // 拿到state里面的singer
@@ -62,17 +66,17 @@ export default {
 </script>
 <style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'
+.singer-detail
+  z-index 200
+  position fixed
+  left 0
+  top 0
+  right 0
+  bottom 0
+  background-color:$color-background
 .change-enter-active, .change-leave-active
   transition: all 0.3s
 .change-enter, .change-leave-to
   transform: translate3d(100%, 0, 0)
-  opacity: 0
-.singer-detail
-  position: fixed
-  z-index: 100
-  top: 0
-  left: 0
-  right: 0
-  bottom: 0
-  background: $color-background
+
 </style>

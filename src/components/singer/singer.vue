@@ -71,7 +71,7 @@ export default {
         }
       }
       list.forEach((item, index) => {
-        if (index < 10) {
+        if (index < 20) {
           map.hot.items.push(
             new Singer({
               // todo 热门区歌手对象

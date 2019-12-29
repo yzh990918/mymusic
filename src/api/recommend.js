@@ -6,6 +6,6 @@ export function getBanner () {
   return axios.get(url)
 }
 export function getRecommendlist () {
-  const url = HOST + '/personalized?limit=200'
+  const url = HOST + '/top/playlist?limit=100'
   return axios.get(url)
 }

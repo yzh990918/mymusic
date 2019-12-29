@@ -32,14 +32,14 @@
               <div class="icon">
                 <img width="60"
                      height="60"
-                     v-lazy="item.picUrl"
+                     v-lazy="item.coverImgUrl"
                      alt="">
               </div>
               <div class="text">
                 <h2 class="name"
                     v-html="item.name"></h2>
                 <p class="desc"
-                   v-html="item.copywriter"></p>
+                   v-html="item.description"></p>
               </div>
             </li>
           </ul>
@@ -92,7 +92,7 @@ export default {
       })
       setTimeout(() => {
         getRecommendlist().then((res) => {
-          this.recommendsList = res.data.result
+          this.recommendsList = res.data.playlists
           console.log(this.recommendsList)
         }
 
@@ -158,11 +158,11 @@ export default {
           .name
             margin-bottom: 10px
             color: $color-text
+          .desc
+            color: $color-text-d
             overflow hidden
             white-space nowrap
             text-overflow ellipsis
-          .desc
-            color: $color-text-d
     .loading-wrapper
       // ! 加载loading 居中显示
       position: absolute

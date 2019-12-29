@@ -190,6 +190,7 @@ export default {
       }
       //* 当滚动到底部，且-newY大于最后一个元素的上限
       this.currentindex = listHeight.length - 2
+      // console.log(this.index)
     },
     diff (newval) {
       // *思路：通过计算出滚屏所在位置距上限的差值是否大于标题的高度 如果大于不用操作 小于的话向上平移差值的高度 这样就不会有两个标题重叠的现象 会把上一个fixedtitle向上顶
