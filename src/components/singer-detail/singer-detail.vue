@@ -1,7 +1,7 @@
 <template>
   <transition name="change">
     <div class="singer-detail">
-       <musiclist></musiclist>
+       <musiclist :songs="songs" :title="title" :bgImage="bgimage"></musiclist>
     </div>
 
   </transition>
@@ -26,6 +26,12 @@ export default {
   components: {musiclist},
 
   computed: {
+    title () {
+      return this.singer.name
+    },
+    bgimage () {
+      return this.singer.avatar
+    },
     // 拿到state里面的singer
     ...mapGetters(['singer'])
   },

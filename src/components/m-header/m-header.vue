@@ -38,7 +38,6 @@ export default {
   text-align: center
   color: $color-theme
   font-size: 0
-  z-index: 50
   .icon
     display: inline-block
     vertical-align: top

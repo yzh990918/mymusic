@@ -3,8 +3,8 @@
     <div class="back" @click="back">
       <i class="icon-back"></i>
     </div>
-    <h1 class="title"></h1>
-<div class="bg-image">
+    <h1 class="title" v-html="title"></h1>
+<div class="bg-image" :style="bgimage">
   <div class="play-wrapper">
     <div class="play"></div>
   </div>
@@ -17,7 +17,19 @@
 
 export default {
   name: 'music-list',
-  props: [''],
+  props: {
+    bgImage: {
+      type: String,
+      default: ''
+    },
+    songs: {
+      type: Array
+    },
+    title: {
+      type: String,
+      default: ''
+    }
+  },
   data () {
     return {
 
@@ -26,7 +38,11 @@ export default {
 
   components: {},
 
-  computed: {},
+  computed: {
+    bgimage () {
+      return `background-image:url(${this.bgImage})`
+    }
+  },
 
   beforeMount () {},
 
@@ -58,7 +74,7 @@ export default {
     position absolute
     top 0
     left 6px
-    z-index 100
+    z-index 50
     .icon-back
       display block
       font-size $font-size-large-x
@@ -69,6 +85,7 @@ export default {
     top 0
     left 10%
     width 80%
+    line-height 40px
     font-size $font-size-large
     color $color-text
     text-align center
