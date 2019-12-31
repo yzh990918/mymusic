@@ -1,16 +1,15 @@
 <template>
   <transition name="change">
     <div class="singer-detail">
-       <musiclist :songs="songs" :title="title" :bgImage="bgimage"></musiclist>
+       <musiclist :songs="listdetail" :title="title" :bgImage="bgimage"></musiclist>
     </div>
-
   </transition>
 </template>
 
 <script>
 import { mapGetters } from 'vuex'
 import { getSingerDetail } from '../../api/singer'
-import { ERR_OK } from '../../api/config'
+// import { ERR_OK } from '../../api/config'
 import {createSong} from '../../common/js/song'
 import musiclist from '../music-list/music-list'
 // 取数据的语法堂
@@ -19,7 +18,10 @@ export default {
   props: [''],
   data () {
     return {
-      songs: []
+      songs: [],
+      node: null,
+      listdetail: []
+
     }
   },
 
@@ -50,12 +52,17 @@ export default {
         this.$router.push('/singer')
         return
       }
-      getSingerDetail(this.singer.id).then(res => {
-        if (res.status === ERR_OK) {
-          // console.log(res.data.list)
-          this.songs = this._normalizeSong(res.data.hotSongs)
-          console.log(this.songs)
-        }
+      // getSingerDetail(this.singer.id).then(res => {
+      //   if (res.status === ERR_OK) {
+      //     // console.log(res.data.list)
+      //     this.songs = this._normalizeSong(res.data.hotSongs)
+      //     console.log(this.songs)
+      //   }
+      // })
+
+      getSingerDetail(this.singer.id).then((res) => {
+        this.node = res.data.hotSongs
+        // console.log(this.songs)
       })
     },
     _normalizeSong (list) {
@@ -67,7 +74,11 @@ export default {
     }
   },
 
-  watch: {}
+  watch: {
+    node (val) {
+      this.listdetail = this._normalizeSong(val)
+    }
+  }
 }
 </script>
 <style lang="stylus" scoped>

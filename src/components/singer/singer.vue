@@ -59,7 +59,7 @@ export default {
             item.initial = py[0][0].toUpperCase()
           })
           this.singers = this._normallizeSinger(s)
-          console.log(this.singers)
+          // console.log(this.singers)
         })
       }, 1000)
     },
