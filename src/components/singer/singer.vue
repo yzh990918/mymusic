@@ -35,13 +35,15 @@ export default {
   methods: {
     ...mapMutations({
       // * 将 this.setSinger映射为 this.$store.commit(SET_SINGER) 简化代码
-      setSinger: 'SET_SINGER'
+      setSinger: 'SET_SINGER',
+      setSingerId: 'SET_SINGERID'
     }),
     selectSinger (singer) {
       this.$router.push({
         path: `/singer/${singer.id}`
       })
       this.setSinger(singer)
+      this.setSingerId(singer.id)
     },
 
     _getsingerList () {

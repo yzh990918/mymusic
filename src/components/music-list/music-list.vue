@@ -30,7 +30,7 @@
 import scroll from '../base/scroll/scroll'
 import songlist from '../base/songlist/songlist'
 import loading from '../base/loading/loading'
-import {mapActions} from 'vuex'
+import {mapActions, mapMutations} from 'vuex'
 const TITLE_HEIGHT = 40
 // const RESERVERD_HEIGHT = 40
 export default {
@@ -78,6 +78,9 @@ export default {
   },
 
   methods: {
+    ...mapMutations({
+      setSingerId: 'SET_SINGERID'
+    }),
     ...mapActions([
       'selectPlay'
     ]),

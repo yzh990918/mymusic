@@ -12,7 +12,7 @@
     </div>
     <h1 class="title" v-html="currentSong.name">
     </h1>
-    <h2 class="subtitle" v-html="currentSong.singer"></h2>
+    <h2 class="subtitle" v-html="currentSong.singer" @click="tosinger"></h2>
   </div>
   <!-- 中间部分cd唱片 歌曲歌词 -->
   <div class="middle">
@@ -62,18 +62,19 @@
   </div>
 </div>
 <div class="mini-player" @click="open" v-show="!fullScreen"></div>
+<audio autoplay muted ref="audio" :src="songsUrl"></audio>
   </div>
 </template>
 
 <script>
 import {mapGetters, mapMutations} from 'vuex'
-
+import {getMusic} from '../../api/singer'
 export default {
   name: 'player',
   props: [''],
   data () {
     return {
-
+      songsUrl: []
     }
   },
 
@@ -83,16 +84,23 @@ export default {
     ...mapGetters([
       'fullScreen',
       'playlist',
-      'currentSong'
+      'currentSong',
+      'singerId'
     ])
-
   },
-
   beforeMount () {},
-
-  mounted () {},
-
+  mounted () {
+  },
+  created () {
+  },
   methods: {
+    tosinger () {
+      if (this.singerId) { this.setFullScreen(false) } else {
+        this.$router.push({
+          path: `/singer/${this.singerId}`
+        })
+      }
+    },
     back () {
       this.setFullScreen(false)
     },
@@ -104,7 +112,16 @@ export default {
     })
   },
 
-  watch: {}
+  watch: {
+    currentSong () {
+      getMusic(this.currentSong.id).then((res) => {
+        this.songsUrl = res.data.data[0].url
+        console.log(this.songsUrl)
+        this.$refs.audio.play()
+      })
+    }
+
+  }
 
 }
 
@@ -175,7 +192,7 @@ export default {
         padding-top 80%
         .cd-wrapper
           position absolute
-          left 10%
+          left 8%
           top 0
           width  80%
           height 100%
@@ -183,7 +200,6 @@ export default {
             width 100%
             height 100%
             box-sizing border-box
-            border 10px solid rgba(255,255,255,0.1);
             border-radius 50%
             .image
               position absolute
@@ -192,6 +208,7 @@ export default {
               width 100%
               height  100%
               border-radius 50%
+              border: 10px solid hsla(0,0%,100%,.1)
     .bottom
       position absolute
       bottom 50px
