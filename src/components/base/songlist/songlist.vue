@@ -3,6 +3,7 @@
     <ul>
       <li v-for="(item,index) in songs"
           :key="index"
+          @click="selectItem(item,index)"
           class="item">
         <div class="content">
           <h2 class="name">
@@ -40,10 +41,15 @@ export default {
   beforeMount () {},
 
   mounted () {
-    console.log(this.songs)
+    setTimeout(() => {
+      console.log(this.songs)
+    }, 1500)
   },
 
   methods: {
+    selectItem (item, index) {
+      this.$emit('select', item, index)
+    },
     getdesc (song) {
       return `${song.singer}-${song.album}`
     }

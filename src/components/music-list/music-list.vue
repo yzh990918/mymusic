@@ -16,7 +16,7 @@
     <div class="layer" ref="layer"></div>
     <scroll :probeType="probetype" :listenScroll="true" @scroll="scroll" :data="songs" class="list" ref="list">
       <div class="songlist-wrapper">
-        <songlist :songs="songs"></songlist>
+        <songlist  @select="selectItem" :songs="songs"></songlist>
       </div>
     </scroll>
     <div v-show="!songs.length"
@@ -30,6 +30,7 @@
 import scroll from '../base/scroll/scroll'
 import songlist from '../base/songlist/songlist'
 import loading from '../base/loading/loading'
+import {mapActions} from 'vuex'
 const TITLE_HEIGHT = 40
 // const RESERVERD_HEIGHT = 40
 export default {
@@ -77,6 +78,12 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'selectPlay'
+    ]),
+    selectItem (item, index) {
+      this.selectPlay({list: this.songs, index})
+    },
     back () {
       this.$router.push('/singer')
     },

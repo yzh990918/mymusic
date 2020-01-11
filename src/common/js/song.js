@@ -18,7 +18,8 @@ export default class Song {
         album,
         // duration,
         image,
-        mv
+        mv,
+        url
         // url
     }) {
         this.id = id
@@ -28,7 +29,8 @@ export default class Song {
         this.album = album
         // this.duration = duration
         this.image = image
-        this.mv=mv
+        this.mv=mv,
+        this.url =url
         // this.url = url
     }
 
@@ -57,7 +59,8 @@ export function createSong(music) {
       name:music.name,
       album:music.al.name,//专辑名
       image: music.al.picUrl,
-      mv:music.mv
+      mv:music.mv,
+      url:`http://neteasemusic.yangxiansheng.top/song/url?id=${music.id}`
     })
 }
 /**
