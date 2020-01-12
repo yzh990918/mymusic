@@ -1,5 +1,6 @@
 <template>
   <div class="player" v-show="playlist.length">
+    <transition name="normal-player">
 <div class="normal-player" v-show="fullScreen">
   <!-- 背景图 -->
   <div class="background">
@@ -61,8 +62,25 @@
     </div>
   </div>
 </div>
-<div class="mini-player" @click="open" v-show="!fullScreen"></div>
-<audio autoplay muted ref="audio" :src="songsUrl"></audio>
+ </transition>
+ <transition name="min-player">
+<div class="mini-player" @click="open" v-show="!fullScreen">
+  <div class="image">
+    <img class=""  width="40" height="40" :src="currentSong.image"  >
+  </div>
+  <div class="text">
+    <h2 class="name" v-html="currentSong.name"></h2>
+    <p class="singername" v-html="currentSong.singer"></p>
+  </div>
+  <div class="control">
+    <i class="icon-mini icon-play-mini"></i>
+  </div>
+  <div class="control">
+    <i class="icon-playlist"></i>
+  </div>
+</div>
+ </transition>
+<audio autoplay muted ref="audio" @canplay="getDuration" :src="songsUrl"></audio>
   </div>
 </template>
 
@@ -94,6 +112,10 @@ export default {
   created () {
   },
   methods: {
+    getDuration () {
+      console.log(this.$refs.audio.duration)
+      this.duration = this.$refs.audio.duration
+    },
     tosinger () {
       if (this.singerId) { this.setFullScreen(false) } else {
         this.$router.push({
@@ -117,6 +139,7 @@ export default {
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
         console.log(this.songsUrl)
+        // this.$refs.audio.play()
         this.$refs.audio.play()
       })
     }
@@ -139,6 +162,16 @@ export default {
     bottom 0
     z-index 150
     background $color-background
+    &.normal-player-enter-active,&.normal-player-leave-active
+      transition all 0.4s
+      .top,.bottom
+        transition all 0.4s cubic-bezier(0.86,0.18,0.82,1.32)
+    &.normal-player-enter,&.normal-player-leave-active
+      opacity 0
+      .top
+        transform translate3d(0,-100px,0)
+      .bottom
+        transform translate3d(0,100px,0)
     .background
       position absolute
       left 0
@@ -201,6 +234,7 @@ export default {
             height 100%
             box-sizing border-box
             border-radius 50%
+            animation:rotate 20s linear infinite
             .image
               position absolute
               left 0
@@ -237,5 +271,50 @@ export default {
           text-align left
         .icon-favorite
           color:$color-sub-theme
+  .mini-player
+    display:flex
+    align-items center
+    position fixed
+    left 0
+    bottom 0
+    z-index 180
+    width 100%
+    height 60px
+    background $color-highlight-background
+    &.mini-player-enter-active,&.mini-player-leave-active
+      transition all 0.4s
+    &.mini-player-enter,&.mini-player-leave-active
+      opacity 0
+    .image
+      flex 0 0 40px
+      width 40px
+      padding 0 10px 0 20px
+      img
+        border-radius 50%
+    .text
+      display flex
+      flex-direction column
+      justify-content center
+      flex 1
+      line-height 20px
+      overflow hidden
+      .name
+        margin-bottom 2px
+        no-wrap()
+        font-size $font-size-meidum
+        color $color-text
+      .singername
+        no-wrap()
+        font-size $font-size-small
+        color $color-text-d
+    .control
+      flex 0 0 30px
+      width 30px
+      padding 0 10px
+      .icon-play-mini, .icon-pause-mini, .icon-playlist
+        font-size 1.875rem
+        color $color-theme-d
+      .icon-mini
+        font-size 2rem
 
 </style>
