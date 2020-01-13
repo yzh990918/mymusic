@@ -91,9 +91,9 @@ export default {
   right 0
   bottom 0
   background-color:$color-background
-.change-enter-active, .change-leave-active
-  transition: all 0.3s
-.change-enter, .change-leave-to
-  transform: translate3d(100%, 0, 0)
+  &.change-enter-active, &.change-leave-active
+    transition: all 0.3s
+  &.change-enter, &.change-leave-to
+    transform: translate3d(100%, 0, 0)
 
 </style>

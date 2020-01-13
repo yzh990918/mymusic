@@ -1,6 +1,11 @@
 <template>
   <div class="player" v-show="playlist.length">
-    <transition name="normal-player">
+    <transition name="normal-player"
+    @enter="enter"
+    @after-enter="afterEnter"
+    @leave="leave"
+    @after-leave="afterLeave"
+    >
 <div class="normal-player" v-show="fullScreen">
   <!-- 背景图 -->
   <div class="background">
@@ -18,7 +23,7 @@
   <!-- 中间部分cd唱片 歌曲歌词 -->
   <div class="middle">
     <div class="middle-l">
-      <div class="cd-wrapper">
+      <div class="cd-wrapper" ref="cdWrapper">
         <div class="cd" >
           <img class="image" :src="currentSong.image" alt="">
         </div>
@@ -85,6 +90,7 @@
 </template>
 
 <script>
+import animations from 'create-keyframe-animation'
 import {mapGetters, mapMutations} from 'vuex'
 import {getMusic} from '../../api/singer'
 export default {
@@ -112,6 +118,68 @@ export default {
   created () {
   },
   methods: {
+    enter (el, done) {
+      // 解构取 x,y,scale
+      const {x, y, scale} = this._getPosAndScale()
+      let animation = {
+        // 底部飞到大图片 然后从60到100 scale回调
+        0: {
+          transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+        },
+        60: {
+          transform: `translate3d(0,0,0) scale(1.1)`
+        },
+        100: {
+          transform: `translate3d(0,0,0) scale(1)`
+        }
+      }
+      // 注册animation
+      animations.registerAnimation({
+        name: 'move',
+        animation, // 定义好的动画
+        presets: { // 预设字段
+          duration: 400,
+          easing: 'linear'
+        }
+      })
+      // 运行animation
+      animations.runAnimation(this.$refs.cdWrapper, 'move', done)
+    },
+    afterEnter () {
+      // 清除animation
+      animations.unregisterAnimation('move')
+      this.$refs.cdWrapper.style.animation = ''
+    },
+    leave (el, done) {
+      const {x, y, scale} = this._getPosAndScale()
+      this.$refs.cdWrapper.style['transform'] = `translate3d(${x}px,${y}px,0) scale(${scale})`
+      this.$refs.cdWrapper.style.transition = 'all 0.4s'
+      // 监听transitionend事件 之后执行afterLeave
+      this.$refs.cdWrapper.addEventListener('transitionend', done)
+    },
+    afterLeave () {
+      this.$refs.cdWrapper.style['transform'] = ''
+      this.$refs.cdWrapper.style.transition = ''
+    },
+    // * 要做一个大图片从mini播放器飞到大图层cdWrapper的动画 使用到create-keyframe-animation第三方插键
+    // ! 思路：1.计算出偏移横纵坐标 2.横轴偏移(屏幕宽度/2-min播放器左侧偏移) 3.纵轴偏移(屏幕高度-大图层paddingTop-min播放器圆心距底部位置-cdwrapper的高度/2) 4.书写动画
+
+    _getPosAndScale () {
+      // 默认向左偏移为负数 向下偏移为正数
+      const targetwidth = 40 // 图片宽度
+      const paddingLeft = 40 // min图片的圆心左翩移
+      const paddingBottom = 30
+      const paddingTop = 80
+      const width = window.innerWidth * 0.8// cd-wrapper的宽度
+      const scale = targetwidth / width // 初始缩放比例
+      const x = -(window.innerWidth / 2 - paddingLeft)
+      const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+      return {
+        x,
+        y,
+        scale
+      }
+    },
     getDuration () {
       console.log(this.$refs.audio.duration)
       this.duration = this.$refs.audio.duration
