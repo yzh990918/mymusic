@@ -291,7 +291,7 @@ export default {
     currentSong () {
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
-        console.log(this.songsUrl)
+        // console.log(this.songsUrl)
         // this.$refs.audio.play()
         this.$refs.audio.play()
       })
