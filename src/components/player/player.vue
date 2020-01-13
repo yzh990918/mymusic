@@ -24,7 +24,7 @@
   <div class="middle">
     <div class="middle-l">
       <div class="cd-wrapper" ref="cdWrapper">
-        <div class="cd" >
+        <div class="cd" :class="cdCLs" >
           <img class="image" :src="currentSong.image" alt="">
         </div>
         <div class="play-lyric-wrapper">
@@ -56,7 +56,7 @@
         <i class="icon-prev"></i>
       </div>
       <div class="icon i-center">
-        <i class="icon-play"></i>
+        <i :class="playIcon" @click="toggleplaying"></i>
       </div>
       <div class="icon i-right">
         <i class="icon-next"></i>
@@ -78,7 +78,7 @@
     <p class="singername" v-html="currentSong.singer"></p>
   </div>
   <div class="control">
-    <i class="icon-mini icon-play-mini"></i>
+    <i :class="miniIcon" @click.prevent.stop="toggleplaying"></i>
   </div>
   <div class="control">
     <i class="icon-playlist"></i>
@@ -105,11 +105,21 @@ export default {
   components: {},
 
   computed: {
+    cdCLs () {
+      return this.playing ? 'play' : 'play pause'
+    },
+    playIcon () {
+      return this.playing ? 'icon-pause' : 'icon-play'
+    },
+    miniIcon () {
+      return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
-      'singerId'
+      'singerId',
+      'playing'
     ])
   },
   beforeMount () {},
@@ -198,18 +208,27 @@ export default {
       this.setFullScreen(true)
     },
     ...mapMutations({
-      setFullScreen: 'SET_FULLSCREEN'
-    })
+      setFullScreen: 'SET_FULLSCREEN',
+      setPlaying: 'SET_PLAYING'
+    }),
+    // 播放状态改变 暂停播放
+    toggleplaying () {
+      this.setPlaying(!this.playing)
+    }
   },
 
   watch: {
     currentSong () {
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
-        console.log(this.songsUrl)
+        // console.log(this.songsUrl)
         // this.$refs.audio.play()
         this.$refs.audio.play()
       })
+    },
+    playing (val) {
+      const audio = this.$refs.audio
+      val ? audio.play() : audio.pause()
     }
 
   }
@@ -293,7 +312,7 @@ export default {
         padding-top 80%
         .cd-wrapper
           position absolute
-          left 8%
+          left 10%
           top 0
           width  80%
           height 100%
@@ -302,7 +321,11 @@ export default {
             height 100%
             box-sizing border-box
             border-radius 50%
-            animation:rotate 20s linear infinite
+            border: 10px solid rgba(255, 255, 255, 0.1)
+            &.play
+              animation rotate 20s linear infinite
+            &.pause
+              animation-play-state paused
             .image
               position absolute
               left 0
@@ -310,7 +333,6 @@ export default {
               width 100%
               height  100%
               border-radius 50%
-              border: 10px solid hsla(0,0%,100%,.1)
     .bottom
       position absolute
       bottom 50px
@@ -384,5 +406,10 @@ export default {
         color $color-theme-d
       .icon-mini
         font-size 2rem
+  @keyframes rotate
+    0%
+      transform rotate(0)
+    100%
+      transform rotate(360deg)
 
 </style>
