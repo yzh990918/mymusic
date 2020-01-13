@@ -76,3 +76,16 @@ function filterSinger(singer) {
  })
  return name.join('/')
 }
+
+
+export function createRecommendSong(music) {
+  return new Song({
+    id:music.id,
+    singer:filterSinger(music.artists),
+    name:music.name,
+    album:music.album.name,//专辑名
+    image: music.album.picUrl,
+    mv:music.mvid,
+    url:`http://neteasemusic.yangxiansheng.top/song/url?id=${music.id}`
+  })
+}

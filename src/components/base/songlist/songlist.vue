@@ -42,7 +42,7 @@ export default {
 
   mounted () {
     setTimeout(() => {
-      console.log(this.songs)
+      // console.log(this.songs)
     }, 1500)
   },
 

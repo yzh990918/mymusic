@@ -25,6 +25,9 @@ const mutations = {
   },
   [types.SET_SINGERID] (state, id) {
     state.singerId = id
+  },
+  [types.SET_DISC] (state, disc) {
+    state.disc = disc
   }
 }
 export default mutations

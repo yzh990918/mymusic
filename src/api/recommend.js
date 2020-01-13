@@ -9,3 +9,8 @@ export function getRecommendlist () {
   const url = HOST + '/top/playlist?limit=100'
   return axios.get(url)
 }
+
+export function getRecommendlistDetail (id) {
+  const url = HOST + `/playlist/detail?id=${id}`
+  return axios.get(url)
+}

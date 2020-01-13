@@ -14,6 +14,7 @@
               <a :href="item.url">
                 <!-- 添加needsclcik 阻止冲突 -->
                 <img class="needsclick"
+                @click="selectbanner(item)"
                      width="100%"
                      @load="loadimage"
                      :src="item.picUrl"
@@ -28,6 +29,7 @@
           <ul>
             <li v-for="(item,index) in recommendsList"
                 :key="index"
+                @click="selectItem(item,index)"
                 class="item">
               <div class="icon">
                 <img width="60"
@@ -50,13 +52,17 @@
         <loading></loading>
       </div>
     </scroll>
+<router-view></router-view>
   </div>
+
 </template>
 <script>
 import {getRecommendlist, getBanner} from '../../api/recommend'
 import scroll from '../base/scroll/scroll'
 import slider from '../base/slider/slider'
 import loading from '../base/loading/loading'
+import {mapMutations, mapActions} from 'vuex'
+
 export default {
   name: 'recommend',
   props: [''],
@@ -74,7 +80,8 @@ export default {
     loading
   },
 
-  computed: {},
+  computed: {
+  },
 
   beforeMount () { },
   mounted () {
@@ -85,6 +92,21 @@ export default {
   },
 
   methods: {
+    ...mapActions([
+      'selectPlay'
+    ]),
+    selectbanner (item, index) {
+      this.selectPlay({list: this.songs, index})
+    },
+    ...mapMutations({
+      setDisc: 'SET_DISC'
+    }),
+    selectItem (item) {
+      this.$router.push({
+        path: `/recommend/${item.id}`
+      })
+      this.setDisc(item)
+    },
     _getcommend () {
       getBanner().then((res) => {
         this.banner = res.data.banners
@@ -123,7 +145,7 @@ export default {
   width: 100%
   top: 88px
   bottom: 0
-  z-index: -1
+  z-index: 1
   .recommend-content
     height: 100%
     overflow: hidden

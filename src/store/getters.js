@@ -20,3 +20,5 @@ export const currentSong = (state) => {
 export const singerId = (state) => {
   return state.singerId
 }
+
+export const disc = state => state.disc

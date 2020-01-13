@@ -7,6 +7,7 @@ const state = {
   sequencelist: [], // 顺序播放的列表
   mode: playMode.sequence, // 默认顺序播放
   currentIndex: -1, // 当前播放的歌曲下标
-  singerId: null
+  singerId: null,
+  disc: {}
 }
 export default state
