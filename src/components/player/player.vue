@@ -52,14 +52,14 @@
       <div class="icon i-left">
         <i class="icon-sequence"></i>
       </div>
-      <div class="icon i-left">
-        <i class="icon-prev"></i>
+      <div class="icon i-left" :class="disabledCls">
+        <i @click="prev" class="icon-prev"></i>
       </div>
-      <div class="icon i-center">
+      <div class="icon i-center" :class="disabledCls">
         <i :class="playIcon" @click="toggleplaying"></i>
       </div>
-      <div class="icon i-right">
-        <i class="icon-next"></i>
+      <div class="icon i-right" :class="disabledCls">
+        <i @click="next" class="icon-next"></i>
       </div>
       <div class="icon i-right">
         <i class="icon icon-not-favorite"></i>
@@ -85,7 +85,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay muted ref="audio" @canplay="getDuration" :src="songsUrl"></audio>
+<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl"></audio>
   </div>
 </template>
 
@@ -98,7 +98,9 @@ export default {
   props: [''],
   data () {
     return {
-      songsUrl: []
+      songsUrl: [],
+      // 歌曲信息加载成功
+      songReady: false
     }
   },
 
@@ -114,12 +116,16 @@ export default {
     miniIcon () {
       return this.playing ? 'icon-pause-mini' : 'icon-play-mini'
     },
+    disabledCls () {
+      return this.songReady ? '' : 'disable'
+    },
     ...mapGetters([
       'fullScreen',
       'playlist',
       'currentSong',
       'singerId',
-      'playing'
+      'playing',
+      'currentIndex'
     ])
   },
   beforeMount () {},
@@ -190,9 +196,15 @@ export default {
         scale
       }
     },
+    error () {
+      // 当歌曲不能播放 url出现错误
+      this.songReady = true
+    },
     getDuration () {
       console.log(this.$refs.audio.duration)
       this.duration = this.$refs.audio.duration
+      // 可以播放 songReady置为true
+      this.songReady = true
     },
     tosinger () {
       if (this.singerId) { this.setFullScreen(false) } else {
@@ -209,11 +221,44 @@ export default {
     },
     ...mapMutations({
       setFullScreen: 'SET_FULLSCREEN',
-      setPlaying: 'SET_PLAYING'
+      setPlaying: 'SET_PLAYING',
+      setCurrentindex: 'SET_CURRENTINDEX'
     }),
+    // *下面这些事件 为了防止点击过快 只有当歌曲能够播放时才触发
     // 播放状态改变 暂停播放
     toggleplaying () {
+      if (!this.songReady) {
+        return
+      }
       this.setPlaying(!this.playing)
+    },
+    next () {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex + 1
+      if (index === this.playlist.length) {
+        index = 0
+      }
+      this.setCurrentindex(index)
+      if (!this.playing) {
+        this.toggleplaying()
+      }
+      this.songReady = false
+    },
+    prev () {
+      if (!this.songReady) {
+        return
+      }
+      let index = this.currentIndex - 1
+      if (index === -1) {
+        index = this.playlist.length - 1
+      }
+      this.setCurrentindex(index)
+      if (!this.playing) {
+        this.toggleplaying()
+      }
+      this.songReady = false
     }
   },
 
@@ -221,7 +266,7 @@ export default {
     currentSong () {
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
-        // console.log(this.songsUrl)
+        console.log(this.songsUrl)
         // this.$refs.audio.play()
         this.$refs.audio.play()
       })
