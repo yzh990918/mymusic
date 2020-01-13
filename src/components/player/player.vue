@@ -45,7 +45,9 @@
     </div>
     <!-- 进度条 -->
     <div class="progress-wrapper">
+      <span class="time time-l">{{format(currentTime)}}</span>
       <div class="progress-bar-wrapper"></div>
+      <span class="time time-r">{{format(songsTime)}}</span>
     </div>
     <!-- 操作区 -->
     <div class="operators">
@@ -85,7 +87,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl"></audio>
+<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime"></audio>
   </div>
 </template>
 
@@ -100,7 +102,9 @@ export default {
     return {
       songsUrl: [],
       // 歌曲信息加载成功
-      songReady: false
+      songReady: false,
+      currentTime: 0,
+      songsTime: 0
     }
   },
 
@@ -134,6 +138,23 @@ export default {
   created () {
   },
   methods: {
+    // todo 下面两个函数都是针对时间戳格式化(0:00) 时间戳格式化
+    format (inteval) {
+      // 向下取整
+      inteval = inteval | 0
+      let minute = inteval / 60 | 0
+      let second = this._pad(inteval % 60)
+      return `${minute}:${second}`
+    },
+    _pad (num, n = 2) {
+      // 如果秒的字符串长度小于2 就补0
+      let len = num.toString().length
+      while (len < n) {
+        num = '0' + num
+        len++
+      }
+      return num
+    },
     enter (el, done) {
       // 解构取 x,y,scale
       const {x, y, scale} = this._getPosAndScale()
@@ -200,9 +221,13 @@ export default {
       // 当歌曲不能播放 url出现错误
       this.songReady = true
     },
+    UpdateTime (e) {
+      this.currentTime = e.target.currentTime
+    },
     getDuration () {
       console.log(this.$refs.audio.duration)
       this.duration = this.$refs.audio.duration
+      this.songsTime = this.$refs.audio.duration
       // 可以播放 songReady置为true
       this.songReady = true
     },
@@ -385,8 +410,6 @@ export default {
       .dot-wrapper
         text-align center
         font-size 0
-      .progress-wrapper
-        display flex
       .operators
         display flex
         align-items center
@@ -406,6 +429,24 @@ export default {
           text-align left
         .icon-favorite
           color:$color-sub-theme
+      .progress-wrapper
+        display flex
+        align-items center
+        width 80%
+        margin 0 auto
+        padding 10px 0
+        .time
+          color:$color-text
+          font-size $font-size-small
+          flex 0 0 30px
+          line-height 1.875rem
+          width 1.875rem
+          &.time-l
+            text-align left
+          &.time-r
+            text-align right
+        .progress-bar-wrapper
+          flex 1
   .mini-player
     display:flex
     align-items center
