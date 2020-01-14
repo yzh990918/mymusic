@@ -14,7 +14,6 @@
               <a :href="item.url">
                 <!-- 添加needsclcik 阻止冲突 -->
                 <img class="needsclick"
-                @click="selectbanner(item)"
                      width="100%"
                      @load="loadimage"
                      :src="item.picUrl"
@@ -95,9 +94,9 @@ export default {
     ...mapActions([
       'selectPlay'
     ]),
-    selectbanner (item, index) {
-      this.selectPlay({list: this.songs, index})
-    },
+    // selectbanner (item, index) {
+    //   this.selectPlay({list: this.songs, index})
+    // },
     ...mapMutations({
       setDisc: 'SET_DISC'
     }),

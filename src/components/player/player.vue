@@ -46,7 +46,9 @@
     <!-- 进度条 -->
     <div class="progress-wrapper">
       <span class="time time-l">{{format(currentTime)}}</span>
-      <div class="progress-bar-wrapper"></div>
+      <div class="progress-bar-wrapper">
+        <progressbar :currentTime="currentTime" :songsTime="songsTime" :precent="precent"></progressbar>
+      </div>
       <span class="time time-r">{{format(songsTime)}}</span>
     </div>
     <!-- 操作区 -->
@@ -72,8 +74,8 @@
  </transition>
  <transition name="min-player">
 <div class="mini-player" @click="open" v-show="!fullScreen">
-  <div class="image">
-    <img class=""  width="40" height="40" :src="currentSong.image"  >
+  <div class="image" :class="cdCLs">
+    <img class=""  width="40" height="40" :src="currentSong.image">
   </div>
   <div class="text">
     <h2 class="name" v-html="currentSong.name"></h2>
@@ -95,6 +97,7 @@
 import animations from 'create-keyframe-animation'
 import {mapGetters, mapMutations} from 'vuex'
 import {getMusic} from '../../api/singer'
+import progressbar from '../progress-bar/progress-bar'
 export default {
   name: 'player',
   props: [''],
@@ -108,9 +111,14 @@ export default {
     }
   },
 
-  components: {},
+  components: {
+    progressbar
+  },
 
   computed: {
+    precent () {
+      return this.currentTime / this.songsTime
+    },
     cdCLs () {
       return this.playing ? 'play' : 'play pause'
     },
@@ -465,6 +473,10 @@ export default {
       flex 0 0 40px
       width 40px
       padding 0 10px 0 20px
+      &.play
+        animation rotate 20s linear infinite
+      &.pause
+        animation-play-state paused
       img
         border-radius 50%
     .text
