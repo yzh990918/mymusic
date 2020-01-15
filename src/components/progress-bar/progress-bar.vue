@@ -115,11 +115,9 @@ export default {
     // }
     currentTime (val) {
       // 拖动过程不修改宽度
-      if (val >= 0 && this.touch.initiated) {
-        // bar的总长度
+      if (val >= 0) {
         const progressTotalWidth = this.$refs.progressbar.clientWidth - 16
         const precentx = val / this.songsTime
-        // 左侧progress的宽度
         const progressWidth = progressTotalWidth * precentx
         this.$refs.progress.style.width = `${progressWidth}px`
         this.$refs.progressbtn.style[transform] = `translate3d(${progressWidth}px,0,0)`
