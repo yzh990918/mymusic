@@ -1,12 +1,17 @@
 <template>
-  <div class="progress-bar" ref="progressbar" >
+  <div class="progress-bar" ref="progressbar"  @click="progressClick" >
     <!-- 总进度条 -->
     <div class="bar-inner" >
       <!-- 进度条左侧 -->
       <div class="progress" ref="progress"></div>
       <!-- 进度条按钮 -->
       <div class="progress-btn-wrapper" >
-        <div class="progress-btn" ref="progressbtn"></div>
+        <div class="progress-btn" ref="progressbtn"
+        @touchstart.prevent="progressTouchStart"
+        @touchmove.prevent="progressTouchMove"
+        @touchend.prevent="progressTouchEnd"
+
+        ></div>
       </div>
     </div>
 
@@ -44,28 +49,77 @@ export default {
 
   beforeMount () {},
 
-  mounted () {
-    console.log(this.currentTime)
-    console.log(this.songsTime)
+  created () {
+    // console.log(this.currentTime)
+    // console.log(this.songsTime)
+    this.touch = {} // 共享数据 挂载到touch对象
   },
 
-  methods: {},
+  methods: {
+    // 点击进度条事件
+    progressClick (e) {
+      // 偏移 e.offsetX鼠标位置
+      this._offset(e.offsetX)
+      // 派发事件
+      this._triggerPrecent()
+    },
+    // 记录第一次触屏位置 和初始进度条偏移
+    progressTouchStart (e) {
+      // 定义初始化
+      this.touch.initiated = true
+      // 第一次触屏的位置
+      this.touch.startX = e.touches[0].pageX
+      // 进度条的初始偏移量
+      this.touch.left = this.$refs.progress.clientWidth
+    },
+    // 记录拖动偏移量 现在偏移量就等于初始偏移量+拖动偏移 但是不能超过进度条的总宽度
+    progressTouchMove (e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      const moveWidth = e.touches[0].pageX - this.touch.startX
+      const offsetWidth = Math.min(this.$refs.progressbar.clientWidth - 16, Math.max(0, this.touch.left + moveWidth))
+      this._triggerPrecent()
+      this._offset(offsetWidth)
+    },
+    // 初始化为false 将拖动信息派发
+    progressTouchEnd (e) {
+      this.touch.initiated = false
+      const barWidth = this.$refs.progressbar.clientWidth - 16
+      const percent = this.$refs.progress.clientWidth / barWidth
+      this.$emit('percentChangeEnd', percent)
+    },
+    // 偏移方法
+    _offset (offsetWidth) {
+      this.$refs.progress.style.width = `${offsetWidth}px`
+      this.$refs.progressbtn.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+    },
+    _triggerPrecent () {
+      // 派发当前precent
+      const progressTotalWidth = this.$refs.progressbar.clientWidth - 16
+      const precent = this.$refs.progress.clientWidth / progressTotalWidth
+      this.$emit('precentChange', precent)
+    }
+  },
 
   watch: {
     // precent (newPrecent) {
     //   console.log(this.newPrecent)
     //   if (newPrecent >= 0) {
-    //     // bar的总长度
+
     //     let barWidth = this.$ref.progressbar.clientWidth - progressBtnWidth
-    //     // 左侧progress的宽度
+
     //     let offseWidth = newPrecent * barWidth
     //     this.$refs.progress.style.width = `${offseWidth}px`
     //   }
     // }
     currentTime (val) {
-      if (val >= 0) {
+      // 拖动过程不修改宽度
+      if (val >= 0 && this.touch.initiated) {
+        // bar的总长度
         const progressTotalWidth = this.$refs.progressbar.clientWidth - 16
         const precentx = val / this.songsTime
+        // 左侧progress的宽度
         const progressWidth = progressTotalWidth * precentx
         this.$refs.progress.style.width = `${progressWidth}px`
         this.$refs.progressbtn.style[transform] = `translate3d(${progressWidth}px,0,0)`

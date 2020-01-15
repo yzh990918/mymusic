@@ -47,7 +47,7 @@
     <div class="progress-wrapper">
       <span class="time time-l">{{format(currentTime)}}</span>
       <div class="progress-bar-wrapper">
-        <progressbar :currentTime="currentTime" :songsTime="songsTime" :precent="precent"></progressbar>
+        <progressbar :currentTime="currentTime" :songsTime="songsTime" :precent="precent" @percentChangeEnd="onProgressBarChange"></progressbar>
       </div>
       <span class="time time-r">{{format(songsTime)}}</span>
     </div>
@@ -292,6 +292,13 @@ export default {
         this.toggleplaying()
       }
       this.songReady = false
+    },
+    onProgressBarChange (precent) {
+      // console.log(this.currentTime)
+      this.$refs.audio.currentTime = this.songsTime * precent
+      if (!this.playing) {
+        this.toggleplaying()
+      }
     }
   },
 
