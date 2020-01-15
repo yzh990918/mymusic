@@ -82,8 +82,10 @@
     <p class="singername" v-html="currentSong.singer"></p>
   </div>
   <div class="control">
-    <i :class="miniIcon" @click.prevent.stop="toggleplaying"></i>
-  </div>
+    <progresscircle :radius="32" :precent="precent" >
+ <i :class="miniIcon" class="icon-mini" @click.prevent.stop="toggleplaying"></i>
+    </progresscircle>
+</div>
   <div class="control">
     <i class="icon-playlist"></i>
   </div>
@@ -98,6 +100,7 @@ import animations from 'create-keyframe-animation'
 import {mapGetters, mapMutations} from 'vuex'
 import {getMusic} from '../../api/singer'
 import progressbar from '../progress-bar/progress-bar'
+import progresscircle from '../progress-circle/progresscircle'
 export default {
   name: 'player',
   props: [''],
@@ -112,7 +115,8 @@ export default {
   },
 
   components: {
-    progressbar
+    progressbar,
+    progresscircle
   },
 
   computed: {
@@ -511,6 +515,10 @@ export default {
         color $color-theme-d
       .icon-mini
         font-size 2rem
+        position absolute
+        left 0
+        top 0
+
   @keyframes rotate
     0%
       transform rotate(0)
