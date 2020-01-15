@@ -54,7 +54,7 @@
     <!-- 操作区 -->
     <div class="operators">
       <div class="icon i-left">
-        <i class="icon-sequence"></i>
+        <i :class="iconMode" @click="changeMode"></i>
       </div>
       <div class="icon i-left" :class="disabledCls">
         <i @click="prev" class="icon-prev"></i>
@@ -101,6 +101,8 @@ import {mapGetters, mapMutations} from 'vuex'
 import {getMusic} from '../../api/singer'
 import progressbar from '../progress-bar/progress-bar'
 import progresscircle from '../progress-circle/progresscircle'
+import {playMode} from '../../common/js/config'
+import {shuffle} from '../../common/js/util'
 export default {
   name: 'player',
   props: [''],
@@ -141,8 +143,13 @@ export default {
       'currentSong',
       'singerId',
       'playing',
-      'currentIndex'
-    ])
+      'currentIndex',
+      'mode',
+      'sequencelist'
+    ]),
+    iconMode () {
+      return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
+    }
   },
   beforeMount () {},
   mounted () {
@@ -259,7 +266,9 @@ export default {
     ...mapMutations({
       setFullScreen: 'SET_FULLSCREEN',
       setPlaying: 'SET_PLAYING',
-      setCurrentindex: 'SET_CURRENTINDEX'
+      setCurrentindex: 'SET_CURRENTINDEX',
+      setMode: 'SET_PLAY_MODE',
+      setsplaylist: 'SET_PLAYLIST'
     }),
     // *下面这些事件 为了防止点击过快 只有当歌曲能够播放时才触发
     // 播放状态改变 暂停播放
@@ -303,11 +312,48 @@ export default {
       if (!this.playing) {
         this.toggleplaying()
       }
+    },
+    // TODO:切换模式bug 未解决
+    changeMode () {
+      // console.log(this.currentSong)
+      const mode = (this.mode + 1) % 3
+      this.setMode(mode)
+      let list = null
+      if (this.mode === playMode.random) {
+        list = shuffle(this.playlist)
+      } else {
+        list = this.sequencelist
+      }
+      this.setsplaylist(list)
+      this.resetCurrentIndex(list)
+    //   let list = null
+    //   if (this.mode === playMode.random) {
+    //     list = shuffle(this.sequencelist)
+    //   } else {
+    //     list = this.sequencelist
+    //   }
+    //   // console.log(list)
+    //   this.setsplaylist(list)
+    //   // 保证切换模式的时候当前歌曲不改变
+    //   this.resetCurrentIndex(list)
+    // },
+    },
+    resetCurrentIndex (list) {
+      // findIndex是es6的一个语法，接受一个函数，函数可以拿到每一个list元素
+      let index1 = list.findIndex((item) => {
+        // 将当前歌曲的索引赋值给item的索引
+        return item.id === this.currentSong.id
+      })
+      this.setCurrentindex(index1) // setMutaions方法设置当前的index
     }
+
   },
 
   watch: {
-    currentSong () {
+    currentSong (newSong, oldSong) {
+      if (newSong.id === oldSong.id) {
+        return
+      }
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
         // console.log(this.songsUrl)

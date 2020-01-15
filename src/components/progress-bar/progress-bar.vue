@@ -58,10 +58,16 @@ export default {
   methods: {
     // 点击进度条事件
     progressClick (e) {
-      // 偏移 e.offsetX鼠标位置
-      this._offset(e.offsetX)
-      // 派发事件
-      this._triggerPrecent()
+      //  ! e.pageX 获取到的位置有bug
+      const rect = this.$refs.progressbar.getBoundingClientRect()
+      // rect.left 元素距离左边的距离
+      // e.pageX 点击距离左边的距离
+      const offsetWidth = e.pageX - rect.left
+      // console.log(rect, e.pageX)
+      this._offset(offsetWidth)
+      const barWidth = this.$refs.progressbar.clientWidth - 16
+      const percent = this.$refs.progress.clientWidth / barWidth
+      this.$emit('percentChangeEnd', percent)
     },
     // 记录第一次触屏位置 和初始进度条偏移
     progressTouchStart (e) {
