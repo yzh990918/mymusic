@@ -132,7 +132,6 @@ export default {
       this.dots = new Array(this.children.length)
     },
     // * 第七部 添加自动轮播
-    // todo:自动播放 利用better-scroll goToPage()接口
     _play () {
       let pageIndex = this.currentpageindex + 1
       if (this.loop) {

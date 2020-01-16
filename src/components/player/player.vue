@@ -53,8 +53,8 @@
     </div>
     <!-- 操作区 -->
     <div class="operators">
-      <div class="icon i-left">
-        <i :class="iconMode" @click="changeMode"></i>
+      <div class="icon i-left" @click="changeMode">
+        <i :class="iconMode" ></i>
       </div>
       <div class="icon i-left" :class="disabledCls">
         <i @click="prev" class="icon-prev"></i>
@@ -313,30 +313,21 @@ export default {
         this.toggleplaying()
       }
     },
-    // TODO:切换模式bug 未解决
+    // finished: 没有解决掉更换模式当前歌曲不切换的bug 后续解决
     changeMode () {
-      // console.log(this.currentSong)
       const mode = (this.mode + 1) % 3
       this.setMode(mode)
       let list = null
       if (this.mode === playMode.random) {
-        list = shuffle(this.playlist)
+        list = shuffle(this.sequencelist)
+        this.resetCurrentIndex(list)
+        this.setsplaylist(list)
       } else {
         list = this.sequencelist
+        this.resetCurrentIndex(list)
+        this.setsplaylist(list)
       }
-      this.setsplaylist(list)
-      this.resetCurrentIndex(list)
-    //   let list = null
-    //   if (this.mode === playMode.random) {
-    //     list = shuffle(this.sequencelist)
-    //   } else {
-    //     list = this.sequencelist
-    //   }
-    //   // console.log(list)
-    //   this.setsplaylist(list)
-    //   // 保证切换模式的时候当前歌曲不改变
-    //   this.resetCurrentIndex(list)
-    // },
+      // this.setsplaylist(list)
     },
     resetCurrentIndex (list) {
       // findIndex是es6的一个语法，接受一个函数，函数可以拿到每一个list元素
@@ -346,6 +337,7 @@ export default {
       })
       this.setCurrentindex(index1) // setMutaions方法设置当前的index
     }
+    // todo: 其他模式的功能
 
   },
 
@@ -374,7 +366,6 @@ export default {
 <style lang='stylus' scoped>
 @import '~@/common/stylus/variable.styl'
 @import '~@/common/stylus/mixin'
-
 .player
   .normal-player
     position fixed

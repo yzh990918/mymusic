@@ -1,5 +1,4 @@
 export function hasClass (el, className) {
-  // todo:/(^|\\s)+(className)+(\\s|$)/
   let reg = new RegExp('(^|\\s)' + className + '(\\s|$)')
   // 判断是否有class
   return reg.test(el.className)
