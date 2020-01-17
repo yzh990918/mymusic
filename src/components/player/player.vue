@@ -305,7 +305,7 @@ export default {
       }
       this.setPlaying(!this.playing)
       if (this.currentLyric) {
-        this.currentLyric.stop().togglePlay()
+        this.currentLyric.togglePlay()
       }
     },
     next () {
@@ -321,6 +321,9 @@ export default {
         this.toggleplaying()
       }
       this.songReady = false
+      if (this.currentLyric) {
+        this.currentLyric.togglePlay()
+      }
     },
     End () {
       if (this.mode === playMode.loop) {
@@ -473,14 +476,22 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
+
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
         // console.log(this.songsUrl)
         // this.$refs.audio.play()
-        this.$refs.audio.play()
+        // this.$refs.audio.load()
+        // setTimeout(() => {
+        //   this.$refs.audio.play()
+        // }, 1000)
+        clearTimeout(this.timer)
+        this.timer = setTimeout(() => {
+          this.$refs.audio.play()
+        }, 1000)
       })
       if (this.currentLyric) {
-        return
+        this.currentLyric.stop()
       }
       this._getLyric(this.currentSong.id)
     },
