@@ -7,7 +7,7 @@
     <div class="bg-image" :style="bgimage" ref="image">
       <div class="filter"></div>
       <div class="play-wrapper" ref="playwrapper"  v-show="songs.length">
-        <div class="play-button">
+        <div class="play-button" @click="random">
           <i class="icon-play"></i>
           <span class="text">随机播放热门歌曲</span>
         </div>
@@ -82,7 +82,8 @@ export default {
       setSingerId: 'SET_SINGERID'
     }),
     ...mapActions([
-      'selectPlay'
+      'selectPlay',
+      'randomPlay'
     ]),
     selectItem (item, index) {
       this.selectPlay({list: this.songs, index})
@@ -92,6 +93,11 @@ export default {
     },
     scroll (pos) {
       this.scrollY = pos.y
+    },
+    random () {
+      this.randomPlay({
+        list: this.songs
+      })
     }
   },
 

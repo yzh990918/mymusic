@@ -21,27 +21,40 @@
     <h2 class="subtitle" v-html="currentSong.singer" @click="tosinger"></h2>
   </div>
   <!-- 中间部分cd唱片 歌曲歌词 -->
-  <div class="middle">
-    <div class="middle-l">
+  <div class="middle"
+  @touchstart.prevent="midleTouchStart"
+  @touchmove.prevent='midleTouchMove'
+  @touchend.prevent="middleTouchEnd"
+  >
+    <div class="middle-l" ref="middleL">
       <div class="cd-wrapper" ref="cdWrapper">
         <div class="cd" :class="cdCLs" >
           <img class="image" :src="currentSong.image" alt="">
         </div>
         <div class="play-lyric-wrapper">
           <div class="playing-lyric">
+            {{currentLyrictxt}}
           </div>
         </div>
       </div>
     </div>
-    <div class="middle-r">
-      <div class="lyric-wrapper">
-      </div>
-    </div>
+ <Scroll class="middle-r" ref="lyricList" :data="currentLyric && currentLyric.lines">
+            <div class="lyric-wrapper">
+              <div v-if="currentLyric">
+                <p ref="lyricLine"
+                   class="text"
+                   :class="{'current':currentLineNum === index}"
+                   v-for="(line,index) in currentLyric.lines" :key="index">{{line.txt}}</p>
+              </div>
+            </div>
+          </Scroll>
   </div>
   <!-- 底部进度条 歌曲操作 -->
   <div class="bottom">
     <!-- 滑块条 -->
     <div class="dot-wrapper">
+    <span class="dot" :class="{'active':currentShow === 'cd'}"></span>
+    <span class="dot" :class="{'active':currentShow === 'lyric'}"></span>
     </div>
     <!-- 进度条 -->
     <div class="progress-wrapper">
@@ -91,7 +104,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime"></audio>
+<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
@@ -103,6 +116,12 @@ import progressbar from '../progress-bar/progress-bar'
 import progresscircle from '../progress-circle/progresscircle'
 import {playMode} from '../../common/js/config'
 import {shuffle} from '../../common/js/util'
+import {getLyric} from '../../api/lyric'
+import Lyric from 'lyric-parser'
+import Scroll from '../base/scroll/scroll'
+import {prefixStyle} from '../../common/js/dom'
+const transform = prefixStyle('transform')
+const transitionDuration = prefixStyle('transitionDuration')
 export default {
   name: 'player',
   props: [''],
@@ -112,13 +131,18 @@ export default {
       // 歌曲信息加载成功
       songReady: false,
       currentTime: 0,
-      songsTime: 0
+      songsTime: 0,
+      currentLyric: null,
+      currentLineNum: 0,
+      currentShow: 'cd',
+      currentLyrictxt: ''
     }
   },
 
   components: {
     progressbar,
-    progresscircle
+    progresscircle,
+    Scroll
   },
 
   computed: {
@@ -155,6 +179,9 @@ export default {
   mounted () {
   },
   created () {
+    // 实现左右滑动
+    // 1.定义touch
+    this.touch = {}
   },
   methods: {
     // todo 下面两个函数都是针对时间戳格式化(0:00) 时间戳格式化
@@ -277,6 +304,9 @@ export default {
         return
       }
       this.setPlaying(!this.playing)
+      if (this.currentLyric) {
+        this.currentLyric.stop().togglePlay()
+      }
     },
     next () {
       if (!this.songReady) {
@@ -291,6 +321,22 @@ export default {
         this.toggleplaying()
       }
       this.songReady = false
+    },
+    End () {
+      if (this.mode === playMode.loop) {
+        this.loop()
+      } else {
+        this.next()
+      }
+    },
+    loop () {
+      setTimeout(() => {
+        this.$refs.audio.currentTime = 0
+        this.$refs.audio.play()
+      }, 1000)
+      if (this.currentLyric) { // 将歌词平移到歌曲的开始
+        this.currentLyric.seek(0)
+      }
     },
     prev () {
       if (!this.songReady) {
@@ -311,6 +357,9 @@ export default {
       this.$refs.audio.currentTime = this.songsTime * precent
       if (!this.playing) {
         this.toggleplaying()
+      }
+      if (this.currentLyric) { // 将歌词平移到歌曲的开始
+        this.currentLyric.seek(this.$refs.audio.currentTime * 1000)
       }
     },
     // finished: 没有解决掉更换模式当前歌曲不切换的bug 后续解决
@@ -336,11 +385,89 @@ export default {
         return item.id === this.currentSong.id
       })
       this.setCurrentindex(index1) // setMutaions方法设置当前的index
+    },
+    _getLyric (id) {
+      getLyric(id).then((res) => {
+        // 调用第三方库 将currentLyric转化为一个time-text对象
+        this.currentLyric = new Lyric(res.data.lrc.lyric, this.handleLyric)
+        if (this.playing) {
+          this.currentLyric.play()
+        }
+      })
+    },
+    handleLyric ({lineNum, txt}) {
+      this.currentLineNum = lineNum
+      if (lineNum > 5) {
+        // 获取到往上偏移第五个位置的p
+        let lineEl = this.$refs.lyricLine[lineNum - 5]
+        this.$refs.lyricList.scrollToElement(lineEl, 500)
+      } else {
+        this.$refs.lyricList.scrollTo(0, 0, 1000)
+      }
+      this.currentLyrictxt = txt
+    },
+    //  todo:左右滑动效果展示歌词
+    midleTouchStart (e) {
+      // 设置标志位已经初始化
+      this.touch.initiated = true
+      this.touch.startX = e.touches[0].pageX
+      this.touch.startY = e.touches[0].pageY
+    },
+    midleTouchMove (e) {
+      if (!this.touch.initiated) {
+        return
+      }
+      // 拿到差值
+      const deltaX = e.touches[0].pageX - this.touch.startX
+      const deltaY = e.touches[0].pageY - this.touch.startY
+      // 歌词纵向滚动 当纵向偏移大于左右偏移的时候 我们不应该左右移动
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return
+      }
+      // 拿到滚动过程中middle-r距离左右两侧的屏幕的差值
+      const left = this.currentShow === 'cd' ? 0 : -window.innerWidth
+      const offsetWidth = Math.min(0, Math.max(-window.innerWidth, left + deltaX))
+      this.touch.percent = Math.abs(offsetWidth / window.innerWidth)
+      // lyricList是一个Vue(scroll)组件，是无法直接造作它的dom的，用$el来代替它的dom
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+      this.$refs.lyricList.$el.style[transitionDuration] = 0
+      // 透明度的渐变
+      this.$refs.middleL.style.opacity = 1 - this.touch.percent
+      this.$refs.middleL.style[transitionDuration] = 0
+    },
+    middleTouchEnd () {
+      // 用来决定停在哪个位置
+      let offsetWidth
+      let opacity
+      if (this.currentShow === 'cd') {
+        // 从右向左滑，只需要滑10%就行
+        if (this.touch.percent > 0.1) {
+          offsetWidth = -window.innerWidth // 最终停止的位置
+          opacity = 0
+          this.currentShow = 'lyric' // 改变dot的css样式
+        } else {
+          offsetWidth = 0 // 否则就回到原来的位置
+          opacity = 1
+        }
+      } else { // 从右向左滑，看的是0.9
+        if (this.touch.percent < 0.9) {
+          offsetWidth = 0
+          this.currentShow = 'cd'
+          opacity = 1
+        } else {
+          offsetWidth = -window.innerWidth
+          opacity = 0
+        }
+      }
+      const time = 300
+      this.$refs.lyricList.$el.style[transform] = `translate3d(${offsetWidth}px,0,0)`
+      // 添加动画效果
+      this.$refs.lyricList.$el.style[transitionDuration] = `${time}ms`
+      this.$refs.middleL.style.opacity = opacity
+      this.$refs.middleL.style[transitionDuration] = `${time}ms`
+      this.touch.initiated = false
     }
-    // todo: 其他模式的功能
-
   },
-
   watch: {
     currentSong (newSong, oldSong) {
       if (newSong.id === oldSong.id) {
@@ -352,7 +479,12 @@ export default {
         // this.$refs.audio.play()
         this.$refs.audio.play()
       })
+      if (this.currentLyric) {
+        return
+      }
+      this._getLyric(this.currentSong.id)
     },
+
     playing (val) {
       const audio = this.$refs.audio
       val ? audio.play() : audio.pause()
@@ -429,6 +561,25 @@ export default {
       bottom 170px
       white-space nowrap
       font-size 0
+      .middle-r
+        display inline-block
+        position absolute
+        top 0
+        vertical-align top
+        width 100%
+        height 100%
+        overflow hidden
+        .lyric-wrapper
+          width 80%
+          margin 0 auto
+          overflow hidden
+          text-align center
+          .text
+            line-height 40px
+            color $color-text-d
+            font-size $font-size-medium
+            &.current
+              color:#f1c40f
       .middle-l
         display inline-block
         vertical-align top
@@ -442,6 +593,15 @@ export default {
           top 0
           width  80%
           height 100%
+          .playing-lyric
+            width: 80%
+            margin: 30px auto 0 auto
+            overflow: hidden
+            text-align: center
+            height: 20px;
+            line-height: 20px;
+            font-size: 14px;
+            color: #fff;
           .cd
             width 100%
             height 100%
@@ -459,6 +619,7 @@ export default {
               width 100%
               height  100%
               border-radius 50%
+
     .bottom
       position absolute
       bottom 50px
@@ -466,6 +627,18 @@ export default {
       .dot-wrapper
         text-align center
         font-size 0
+        .dot
+          display inline-block
+          vertical-align middle
+          margin:0 4px
+          width 8px
+          height 8px
+          border-radius 50%
+          background $color-text-l
+          &.active
+            width 20px
+            border-radius 5px
+            background $color-text-ll
       .operators
         display flex
         align-items center
