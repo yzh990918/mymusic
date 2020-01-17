@@ -476,7 +476,7 @@ export default {
       if (newSong.id === oldSong.id) {
         return
       }
-
+      // todo:解决ios声音bug
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
         // console.log(this.songsUrl)
