@@ -1,6 +1,7 @@
 <template>
   <div class="player" v-show="playlist.length">
     <transition name="normal-player"
+    @touchstart.once="firstPlay"
     @enter="enter"
     @after-enter="afterEnter"
     @leave="leave"
@@ -104,7 +105,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
+<audio autoplay  ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
@@ -146,6 +147,7 @@ export default {
   },
 
   computed: {
+
     precent () {
       return this.currentTime / this.songsTime
     },
@@ -184,6 +186,9 @@ export default {
     this.touch = {}
   },
   methods: {
+    firstPlay () {
+      this.$refs.audio.play()
+    },
     // todo 下面两个函数都是针对时间戳格式化(0:00) 时间戳格式化
     format (inteval) {
       // 向下取整
@@ -485,10 +490,7 @@ export default {
         // setTimeout(() => {
         //   this.$refs.audio.play()
         // }, 1000)
-        clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
-          this.$refs.audio.play()
-        }, 1000)
+        // this.$refs.audio.load()
       })
       if (this.currentLyric) {
         this.currentLyric.stop()
