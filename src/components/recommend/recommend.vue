@@ -61,8 +61,9 @@ import scroll from '../base/scroll/scroll'
 import slider from '../base/slider/slider'
 import loading from '../base/loading/loading'
 import {mapMutations, mapActions} from 'vuex'
-
+import {playlistMixin} from '../../common/js/mixin.js'
 export default {
+  mixins: [playlistMixin],
   name: 'recommend',
   props: [''],
   data () {
@@ -129,6 +130,11 @@ export default {
         this.$refs.scroll.refresh()
         this.checkLoaded = true
       }
+    },
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.recommend.style.bottom = bottom
+      this.$refs.scroll.refresh()
     }
   },
 
