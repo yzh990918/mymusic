@@ -107,7 +107,6 @@ export default {
       this.$emit('precentChange', precent)
     }
   },
-
   watch: {
     // precent (newPrecent) {
     //   console.log(this.newPrecent)
@@ -130,7 +129,6 @@ export default {
       }
     }
   }
-
 }
 
 </script>
