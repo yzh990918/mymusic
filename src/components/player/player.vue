@@ -91,7 +91,7 @@
     <img class=""  width="40" height="40" :src="currentSong.image">
   </div>
   <div class="text">
-    <h2 class="name" v-html="currentSong.name"></h2>
+    <h2 class="name" >{{currentSong.name}}<span class="lyric">{{currentLyrictxt}}</span></h2>
     <p class="singername" v-html="currentSong.singer"></p>
   </div>
   <div class="control">
@@ -309,6 +309,7 @@ export default {
       }
     },
     next () {
+      this.$refs.audio.currentTime = 0
       if (!this.songReady) {
         return
       }
@@ -342,6 +343,7 @@ export default {
       }
     },
     prev () {
+      this.$refs.audio.currentTime = 0
       if (!this.songReady) {
         return
       }
@@ -723,6 +725,12 @@ export default {
         no-wrap()
         font-size $font-size-meidum
         color $color-text
+        .lyric
+          font-size 12px
+          color $color-theme
+          margin-left 8px
+          no-wrap()
+          // margin-top 15px
       .singername
         no-wrap()
         font-size $font-size-small
