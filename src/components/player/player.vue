@@ -7,7 +7,7 @@
     @leave="leave"
     @after-leave="afterLeave"
     >
-<div class="normal-player" v-show="fullScreen">
+<div class="normal-player" v-show="fullScreen" @touchstart.once="firstPlay">
   <!-- 背景图 -->
   <div class="background">
     <img width="100%" height="100%" :src="currentSong.image" alt="">
@@ -92,7 +92,7 @@
     <img class=""  width="40" height="40" :src="currentSong.image">
   </div>
   <div class="text">
-    <h2 class="name" v-html="currentSong.name"></h2>
+    <h2 class="name" >{{currentSong.name}}<span class="lyric">{{currentLyrictxt}}</span></h2>
     <p class="singername" v-html="currentSong.singer"></p>
   </div>
   <div class="lyric-wrapper">
@@ -108,7 +108,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay  ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
+<audio autoplay ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
@@ -279,7 +279,6 @@ export default {
       this.currentTime = e.target.currentTime
     },
     getDuration () {
-      console.log(this.$refs.audio.duration)
       this.duration = this.$refs.audio.duration
       this.songsTime = this.$refs.audio.duration
       // 可以播放 songReady置为true
@@ -341,10 +340,8 @@ export default {
       }
     },
     loop () {
-      setTimeout(() => {
-        this.$refs.audio.currentTime = 0
-        this.$refs.audio.play()
-      }, 1000)
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
       if (this.currentLyric) { // 将歌词平移到歌曲的开始
         this.currentLyric.seek(0)
       }
@@ -481,12 +478,20 @@ export default {
   },
   watch: {
     currentSong (newSong, oldSong) {
+      if (!newSong.id) {
+        return
+      }
       if (newSong.id === oldSong.id) {
         return
       }
-      // finished:解决ios声音bug
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
+        // console.log(this.songsUrl)
+        // this.$refs.audio.play()
+        // this.$refs.audio.load()
+        setTimeout(() => {
+          this.$refs.audio.play()
+        }, 1000)
       })
       if (this.currentLyric) {
         this.currentLyric.stop()
@@ -721,6 +726,12 @@ export default {
         no-wrap()
         font-size $font-size-meidum
         color $color-text
+        .lyric
+          font-size 12px
+          color $color-theme
+          margin-left 8px
+          no-wrap()
+          // margin-top 15px
       .singername
         no-wrap()
         font-size $font-size-small
