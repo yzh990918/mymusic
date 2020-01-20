@@ -6,7 +6,7 @@
     @leave="leave"
     @after-leave="afterLeave"
     >
-<div class="normal-player" v-show="fullScreen">
+<div class="normal-player" v-show="fullScreen" @touchstart.once="firstPlay">
   <!-- 背景图 -->
   <div class="background">
     <img width="100%" height="100%" :src="currentSong.image" alt="">
@@ -104,7 +104,7 @@
   </div>
 </div>
  </transition>
-<audio autoplay muted ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
+<audio autoplay ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
@@ -184,6 +184,9 @@ export default {
     this.touch = {}
   },
   methods: {
+    firstPlay () {
+      this.$refs.audio.play()
+    },
     // todo 下面两个函数都是针对时间戳格式化(0:00) 时间戳格式化
     format (inteval) {
       // 向下取整
@@ -271,7 +274,6 @@ export default {
       this.currentTime = e.target.currentTime
     },
     getDuration () {
-      console.log(this.$refs.audio.duration)
       this.duration = this.$refs.audio.duration
       this.songsTime = this.$refs.audio.duration
       // 可以播放 songReady置为true
@@ -309,7 +311,6 @@ export default {
       }
     },
     next () {
-      this.$refs.audio.currentTime = 0
       if (!this.songReady) {
         return
       }
@@ -334,16 +335,13 @@ export default {
       }
     },
     loop () {
-      setTimeout(() => {
-        this.$refs.audio.currentTime = 0
-        this.$refs.audio.play()
-      }, 1000)
+      this.$refs.audio.currentTime = 0
+      this.$refs.audio.play()
       if (this.currentLyric) { // 将歌词平移到歌曲的开始
         this.currentLyric.seek(0)
       }
     },
     prev () {
-      this.$refs.audio.currentTime = 0
       if (!this.songReady) {
         return
       }
@@ -475,20 +473,18 @@ export default {
   },
   watch: {
     currentSong (newSong, oldSong) {
+      if (!newSong.id) {
+        return
+      }
       if (newSong.id === oldSong.id) {
         return
       }
-      // todo:解决ios声音bug
       getMusic(this.currentSong.id).then((res) => {
         this.songsUrl = res.data.data[0].url
         // console.log(this.songsUrl)
         // this.$refs.audio.play()
         // this.$refs.audio.load()
-        // setTimeout(() => {
-        //   this.$refs.audio.play()
-        // }, 1000)
-        clearTimeout(this.timer)
-        this.timer = setTimeout(() => {
+        setTimeout(() => {
           this.$refs.audio.play()
         }, 1000)
       })
