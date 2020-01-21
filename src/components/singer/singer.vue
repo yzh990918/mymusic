@@ -1,6 +1,6 @@
 <template>
-  <div class="singer">
-    <listview @select="selectSinger" :data="singers"></listview>
+  <div class="singer" ref="singer">
+    <listview @select="selectSinger" :data="singers" ref="list"></listview>
     <router-view></router-view>
   </div>
 </template>
@@ -10,8 +10,10 @@ import {getSingers} from '../../api/singer'
 import Singer from '../../common/js/singer'
 import listview from '../base/listview/listview'
 import { mapMutations } from 'vuex'
+import {playlistMixin} from '../../common//js/mixin'
 const pinyin = require('pinyin')
 export default {
+  mixins: [playlistMixin],
   name: 'singer',
   props: [''],
   data () {
@@ -33,6 +35,11 @@ export default {
   mounted () {},
 
   methods: {
+    handlePlaylist (playlist) {
+      const bottom = playlist.length > 0 ? '60px' : ''
+      this.$refs.singer.style.bottom = bottom
+      this.$refs.list.refresh()
+    },
     ...mapMutations({
       // * 将 this.setSinger映射为 this.$store.commit(SET_SINGER) 简化代码
       setSinger: 'SET_SINGER',

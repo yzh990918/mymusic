@@ -102,6 +102,9 @@ export default {
   beforeMount () {},
 
   methods: {
+    refresh () {
+      this.$refs.listview.refresh()
+    },
     selectitem (item) {
       this.$emit('select', item)
     },
