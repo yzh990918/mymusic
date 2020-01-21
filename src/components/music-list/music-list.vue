@@ -31,11 +31,9 @@ import scroll from '../base/scroll/scroll'
 import songlist from '../base/songlist/songlist'
 import loading from '../base/loading/loading'
 import {mapActions, mapMutations} from 'vuex'
-import {playlistMixin} from '../../common/js/mixin'
 const TITLE_HEIGHT = 40
 // const RESERVERD_HEIGHT = 40
 export default {
-  mixins: [playlistMixin],
   name: 'music-list',
   props: {
     bgImage: {
@@ -100,12 +98,6 @@ export default {
       this.randomPlay({
         list: this.songs
       })
-    },
-    handlePlaylist (playlist) {
-      // 重新计算一次 区块bottom变高
-      const bottom = playlist.length > 0 ? '60px' : ''
-      this.$refs.list.$el.style.bottom = bottom
-      this.$refs.list.refresh()
     }
   },
 

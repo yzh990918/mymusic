@@ -142,9 +142,6 @@ export default {
         height += item.clientHeight
         this.listheight.push(height)
       }
-    },
-    refresh () {
-      this.$refs.listview.refresh()
     }
   },
   // todo 5.通过监听data 和scrollY实时计算区间高度和currentindex

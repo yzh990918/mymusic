@@ -1,4 +1,3 @@
-// mixin里面定义的代码会被插入到组件 minxin定义的钩子会merge进组件原有的钩子
 import {
   mapGetters,
   mapMutations,
@@ -6,10 +5,10 @@ import {
 } from 'vuex'
 import {
   playMode
-} from './config'
+} from 'common/js/config'
 import {
   shuffle
-} from './util'
+} from 'common/js/util'
 
 export const playlistMixin = {
   computed: {
@@ -29,7 +28,6 @@ export const playlistMixin = {
     }
   },
   methods: {
-    //* 组件中必须实现该方法 不然会报错
     handlePlaylist () {
       throw new Error('component must implement handlePlaylist method')
     }
