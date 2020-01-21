@@ -92,11 +92,8 @@
     <img class=""  width="40" height="40" :src="currentSong.image">
   </div>
   <div class="text">
-    <h2 class="name" v-html="currentSong.name"></h2>
+    <h2 class="name" >{{currentSong.name}}<span class="lyrictxt">{{currentLyrictxt}}</span></h2>
     <p class="singername" v-html="currentSong.singer"></p>
-  </div>
-  <div class="lyric-wrapper">
-    <span class="lyrictxt">{{currentLyrictxt}}</span>
   </div>
   <div class="control">
     <progresscircle :radius="32" :precent="precent" >
@@ -721,21 +718,15 @@ export default {
         no-wrap()
         font-size $font-size-meidum
         color $color-text
+        .lyrictxt
+          margin-left 10px
+          color $color-theme
+          nor-wrap()
+          font-size 13px
       .singername
         no-wrap()
         font-size $font-size-small
         color $color-text-d
-    .lyric-wrapper
-      flex 1
-      display flex
-      flex-direction column
-      justify-content center
-      .lyrictxt
-        line-height 20px
-        font-size 13px
-        width 80%
-        color $color-text-d
-        no-wrap()
     .control
       flex 0 0 30px
       width 30px
