@@ -5,6 +5,9 @@
           :key="index"
           @click="selectItem(item,index)"
           class="item">
+          <div class="rank" v-show="rank">
+            <span :class="getRankCls(index)" v-text="getRanktext(index)"></span>
+          </div>
         <div class="content">
           <h2 class="name">
             {{item.name}}
@@ -24,6 +27,9 @@ export default {
     songs: {
       type: Array
       // default: []
+    },
+    rank: {
+      type: Boolean
     }
   },
   data () {
@@ -52,6 +58,18 @@ export default {
     },
     getdesc (song) {
       return `${song.singer}-${song.album}`
+    },
+    getRankCls (index) {
+      if (index <= 2) {
+        return `icon icon${index}`
+      } else {
+        return 'text'
+      }
+    },
+    getRanktext (index) {
+      if (index > 2) {
+        return index + 1
+      }
     }
   },
 
@@ -68,6 +86,25 @@ export default {
     align-items: center
     display: flex
     height: 64px
+    .rank
+      flex 0 0 25px
+      width 25px
+      margin-right 30px
+      text-align center
+      .icon
+        display inline-block
+        width 25px
+        height 24px
+        background-size 25px 24px
+        &.icon0
+          bg-image('first')
+        &.icon1
+          bg-image('second')
+        &.icon2
+          bg-image('third')
+      .text
+        color $color-theme
+        font-size $font-size-large
     .content
       line-height: 20px
       overflow: hidden

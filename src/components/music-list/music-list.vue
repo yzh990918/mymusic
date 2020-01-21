@@ -16,7 +16,7 @@
     <div class="layer" ref="layer"></div>
     <scroll :probeType="probetype" :listenScroll="true" @scroll="scroll" :data="songs" class="list" ref="list">
       <div class="songlist-wrapper">
-        <songlist  @select="selectItem" :songs="songs"></songlist>
+        <songlist  @select="selectItem" :songs="songs" :rank="rank"></songlist>
       </div>
     </scroll>
     <div v-show="!songs.length"
@@ -46,6 +46,9 @@ export default {
     title: {
       type: String,
       default: ''
+    },
+    rank: {
+      type: Boolean
     }
   },
   data () {
