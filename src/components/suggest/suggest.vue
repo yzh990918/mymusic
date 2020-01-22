@@ -9,7 +9,9 @@
   </div>
 <ul class="suggest-list" v-if="suggest.songs">
   <p class="title">单曲列表</p>
-  <Scroll class="list" :class="listCls" :data="songs">
+  <Scroll @scrollToEnd="searchMore" class="list"
+  ref="scroll"
+  :class="listCls" :pullup="true" :data="songs">
     <div>
   <li class="suggest-item" v-for="(item,index) of songs" :key="index">
     <div class="icon">
@@ -25,11 +27,11 @@
 </ul>
 </div>
 </template>
-
 <script>
 import Scroll from '../base/scroll/scroll'
 import {getSearchSongs, getSearchSuggest} from '../../api/search'
 import {createRecommendSong} from '../../common/js/song'
+import loading from '../base/loading/loading'
 export default {
   name: 'suggest',
   props: {
@@ -44,11 +46,13 @@ export default {
       page: 0,
       songs: [],
       suggest: {},
-      showSinger: true
+      showSinger: true,
+      // todo: 上拉刷新bug 总是显示loading
+      showMore: true
     }
   },
 
-  components: {Scroll},
+  components: {Scroll, loading},
   created () {
   },
 
@@ -81,12 +85,36 @@ export default {
       getSearchSuggest(this.query).then((res) => {
         this.suggest = res.data.result
       })
+    },
+    searchMore () {
+      if (!this.showMore) {
+        return
+      }
+      if (!this.songs.length) {
+        return
+      }
+      getSearchSongs(this.query, this.page).then((res) => {
+        let list = res.data.result.songs
+        if (!res.data.result.songs) {
+          return
+        }
+        let ret = []
+        list.forEach((item) => {
+          ret.push(createRecommendSong(item))
+        })
+        this.songs = this.songs.concat(ret)
+        this.$refs.scroll.refresh()
+        this.page += 1
+      })
     }
   },
 
   watch: {
     query (val) {
       this.search()
+      if (val === '') {
+        this.showMore = false
+      }
     }
 
   }
