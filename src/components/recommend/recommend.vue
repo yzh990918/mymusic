@@ -9,15 +9,14 @@
         <div class="slider-wrapper"
              v-if="banner.length">
           <slider>
-            <div v-for="(item,index) in banner"
-            @click.stop="selectBanner(item)"
+            <div v-for="(item, index) in banner"
                  :key="index">
-                <!-- 添加needsclcik 阻止冲突 -->
-                <img class="needsclick"
-                     width="100%"
-                     @load="loadimage"
-                     :src="item.picUrl"
-                     alt="">
+              <!-- 添加needsclcik 阻止冲突 -->
+              <img class="needsclick"
+                   width="100%"
+                   @load="loadimage"
+                   :src="item.picUrl"
+                   alt="" />
             </div>
           </slider>
         </div>
@@ -25,15 +24,15 @@
              ref="recommendscroll">
           <h1 class="list-title">热门歌单推荐</h1>
           <ul>
-            <li v-for="(item,index) in recommendsList"
+            <li v-for="(item, index) in recommendsList"
                 :key="index"
-                @click="selectItem(item,index)"
+                @click="selectItem(item, index)"
                 class="item">
               <div class="icon">
                 <img width="60"
                      height="60"
                      v-lazy="item.coverImgUrl"
-                     alt="">
+                     alt="" />
               </div>
               <div class="text">
                 <h2 class="name"
@@ -50,18 +49,17 @@
         <loading></loading>
       </div>
     </scroll>
-<router-view></router-view>
+    <router-view></router-view>
   </div>
-
 </template>
 <script>
-import {getRecommendlist, getBanner} from '../../api/recommend'
+import { getRecommendlist, getBanner } from '../../api/recommend'
 import scroll from '../base/scroll/scroll'
 import slider from '../base/slider/slider'
 import loading from '../base/loading/loading'
-import {mapMutations, mapActions} from 'vuex'
-import {playlistMixin} from '../../common/js/mixin'
-import {getSongDetail} from '../../api/search'
+import { mapMutations, mapActions } from 'vuex'
+import { playlistMixin } from '../../common/js/mixin'
+import { getSongDetail } from '../../api/search'
 export default {
   mixins: [playlistMixin],
   name: 'recommend',
@@ -70,7 +68,6 @@ export default {
     return {
       banner: [],
       recommendsList: []
-
     }
   },
 
@@ -80,13 +77,10 @@ export default {
     loading
   },
 
-  computed: {
-  },
+  computed: {},
 
-  beforeMount () { },
-  mounted () {
-
-  },
+  beforeMount () {},
+  mounted () {},
   created () {
     this._getcommend()
   },
@@ -95,7 +89,7 @@ export default {
     selectBanner (item) {
       let retSong = /\/song\?id/
       if (retSong.test(item.url)) {
-        getSongDetail(item.targetId).then((res) => {
+        getSongDetail(item.targetId).then(res => {
           let m = res.data.songs[0]
           let song = {
             id: m.id,
@@ -114,10 +108,7 @@ export default {
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
-    ...mapActions([
-      'selectPlay',
-      'insertSong'
-    ]),
+    ...mapActions(['selectPlay', 'insertSong']),
     // selectbanner (item, index) {
     //   this.selectPlay({list: this.songs, index})
     // },
@@ -132,17 +123,15 @@ export default {
       this.setDisc(item)
     },
     _getcommend () {
-      getBanner().then((res) => {
+      getBanner().then(res => {
         this.banner = res.data.banners
         // console.log(res.data.banners)
       })
       setTimeout(() => {
-        getRecommendlist().then((res) => {
+        getRecommendlist().then(res => {
           this.recommendsList = res.data.playlists
           console.log(this.recommendsList)
-        }
-
-        )
+        })
       }, 1500)
     },
     /**
@@ -158,11 +147,9 @@ export default {
   },
 
   watch: {}
-
 }
-
 </script>
-<style lang='stylus' scoped>
+<style lang="stylus" scoped>
 @import '~@/common/stylus/variable.styl'
 .recommend
   position: fixed
@@ -206,9 +193,9 @@ export default {
             color: $color-text
           .desc
             color: $color-text-d
-            overflow hidden
-            white-space nowrap
-            text-overflow ellipsis
+            overflow: hidden
+            white-space: nowrap
+            text-overflow: ellipsis
     .loading-wrapper
       // ! 加载loading 居中显示
       position: absolute

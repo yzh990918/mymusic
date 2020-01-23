@@ -81,7 +81,6 @@ export default {
     // *计算距顶高度 设置后面的偏移量
     this.minTranslateY = -this.imageHeight + TITLE_HEIGHT
   },
-
   methods: {
     handlePlaylist (playlist) {
       // 重新计算一次 区块bottom变高
