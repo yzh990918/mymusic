@@ -126,7 +126,16 @@ export default {
       this._initScrollToElement(shortcutindex)
     },
     _initScrollToElement (index) {
-      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 500)
+      if (!index && index !== 0) {
+        return
+      }
+      if (index < 0) {
+        index = 0
+      } else if (index > this.listheight.length - 2) {
+        index = this.listheight.length - 2
+      }
+      this.scrollY = -this.listheight[index]
+      this.$refs.listview.scrollToElement(this.$refs.listgroup[index], 400)
     },
     // todo 3.获取左侧滚屏的y值
     handlescroll (pos) {
