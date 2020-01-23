@@ -1,5 +1,5 @@
 <template>
-  <div class="suggest">
+  <div class="suggest" ref="suggest">
   <div class="search-suggest" v-show="query && songs.length">
     <p class="title" v-show="showSinger">你可能感兴趣</p>
     <div class="search-suggest-item" v-if="suggest.artists">
@@ -24,6 +24,7 @@
   </li>
   </div>
   </Scroll>
+   <loading v-show="showMore" class="loading-content"></loading>
 </ul>
 </div>
 </template>
@@ -31,7 +32,7 @@
 import Scroll from '../base/scroll/scroll'
 import {getSearchSongs, getSearchSuggest} from '../../api/search'
 import {createRecommendSong} from '../../common/js/song'
-import loading from '../base/loading/loading'
+import loading from '../base/loading/loadingpluss'
 export default {
   name: 'suggest',
   props: {
@@ -47,14 +48,12 @@ export default {
       songs: [],
       suggest: {},
       showSinger: true,
-      // todo: 上拉刷新bug 总是显示loading
-      showMore: true
+      // todo: 下拉刷新bug 总是显示loading
+      showMore: false
     }
   },
 
   components: {Scroll, loading},
-  created () {
-  },
 
   computed: {
     listCls () {
@@ -74,7 +73,11 @@ export default {
 
   methods: {
     search () {
+      console.log('首次搜索' + this.showMore)
       getSearchSongs(this.query, this.page).then((res) => {
+        if (!res.data.result.songs.length) {
+          this.showMore = false
+        }
         let list = res.data.result.songs
         let ret = []
         list.forEach((item) => {
@@ -87,16 +90,16 @@ export default {
       })
     },
     searchMore () {
-      if (!this.showMore) {
-        return
-      }
+      this.showMore = true
+      console.log('搜索更多' + this.showMore)
       if (!this.songs.length) {
+        this.showMore = false
         return
       }
       getSearchSongs(this.query, this.page).then((res) => {
         let list = res.data.result.songs
         if (!res.data.result.songs) {
-          return
+          this.showMore = false
         }
         let ret = []
         list.forEach((item) => {
@@ -105,18 +108,24 @@ export default {
         this.songs = this.songs.concat(ret)
         this.$refs.scroll.refresh()
         this.page += 1
+      }).then((res) => {
       })
     }
   },
 
   watch: {
     query (val) {
-      this.search()
       if (val === '') {
-        this.showMore = false
+        return
       }
+      this.search()
+    },
+    showMore () {
+      setTimeout(() => {
+        this.showMore = false
+      }, 1000)
+      console.log('watch的showmore' + this.showMore)
     }
-
   }
 
 }
@@ -189,4 +198,9 @@ export default {
           color $color-text-d
           margin-top 4px
           no-wrap()
+    .loading-content
+        position absolute
+        width 100%
+        bottom 0
+        transform translate3d(-10%,0,0)
 </style>
