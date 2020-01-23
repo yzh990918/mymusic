@@ -414,7 +414,7 @@ export default {
       }
       this.currentLyrictxt = txt
     },
-    //  todo:左右滑动效果展示歌词
+    //  finished:左右滑动效果展示歌词
     midleTouchStart (e) {
       // 设置标志位已经初始化
       this.touch.initiated = true

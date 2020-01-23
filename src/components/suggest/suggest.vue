@@ -2,7 +2,8 @@
   <div class="suggest" ref="suggest">
   <div class="search-suggest" v-show="query && songs.length">
     <p class="title" v-show="showSinger">你可能感兴趣</p>
-    <div class="search-suggest-item" v-if="suggest.artists">
+    <div class="search-suggest-item" v-if="suggest.artists"
+     @click="selectSinger(suggest.artists[0])">
       <img :src="suggest.artists[0].img1v1Url" width="40" height="40">
       <span class="text">歌手:<span class="singer">{{suggest.artists[0].name}}</span></span>
     </div>
@@ -13,7 +14,7 @@
   ref="scroll"
   :class="listCls" :pullup="true" :data="songs">
     <div>
-  <li class="suggest-item" v-for="(item,index) of songs" :key="index">
+  <li @click="selectList(item)" class="suggest-item" v-for="(item,index) of songs" :key="index">
     <div class="icon">
       <i class="icon-music"></i>
     </div>
@@ -30,9 +31,10 @@
 </template>
 <script>
 import Scroll from '../base/scroll/scroll'
-import {getSearchSongs, getSearchSuggest} from '../../api/search'
+import {getSearchSongs, getSearchSuggest, getSongDetail} from '../../api/search'
 import {createRecommendSong} from '../../common/js/song'
 import loading from '../base/loading/loadingpluss'
+import Singer from '../../common/js/singer'
 export default {
   name: 'suggest',
   props: {
@@ -48,7 +50,7 @@ export default {
       songs: [],
       suggest: {},
       showSinger: true,
-      // todo: 下拉刷新bug 总是显示loading
+      // finished: 下拉刷新bug 总是显示loading 模拟了加载
       showMore: false
     }
   },
@@ -72,6 +74,21 @@ export default {
   },
 
   methods: {
+    selectSinger (item) {
+      const singer = new Singer({
+        id: item.id,
+        name: item.name,
+        avatar: item.img1v1Url,
+        aliaName: item.alias[0]
+      })
+      this.$emit('select', singer)
+    },
+    selectList (item) {
+      getSongDetail(item.id).then((res) => {
+        item.image = res.data.songs[0].al.picUrl
+      })
+      this.$emit('selectList', item)
+    },
     search () {
       console.log('首次搜索' + this.showMore)
       getSearchSongs(this.query, this.page).then((res) => {
@@ -200,7 +217,8 @@ export default {
           no-wrap()
     .loading-content
         position absolute
-        width 100%
-        bottom 0
-        transform translate3d(-10%,0,0)
+        width 30%
+        top 30%
+        right 0
+        transform translate3d(0,-40%,0)
 </style>

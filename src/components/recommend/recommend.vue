@@ -10,15 +10,14 @@
              v-if="banner.length">
           <slider>
             <div v-for="(item,index) in banner"
+            @click.stop="selectBanner(item)"
                  :key="index">
-              <a :href="item.url">
                 <!-- 添加needsclcik 阻止冲突 -->
                 <img class="needsclick"
                      width="100%"
                      @load="loadimage"
                      :src="item.picUrl"
                      alt="">
-              </a>
             </div>
           </slider>
         </div>
@@ -62,6 +61,7 @@ import slider from '../base/slider/slider'
 import loading from '../base/loading/loading'
 import {mapMutations, mapActions} from 'vuex'
 import {playlistMixin} from '../../common/js/mixin'
+import {getSongDetail} from '../../api/search'
 export default {
   mixins: [playlistMixin],
   name: 'recommend',
@@ -92,19 +92,38 @@ export default {
   },
 
   methods: {
+    selectBanner (item) {
+      let retSong = /\/song\?id/
+      if (retSong.test(item.url)) {
+        getSongDetail(item.targetId).then((res) => {
+          let m = res.data.songs[0]
+          let song = {
+            id: m.id,
+            singer: m.ar[0].name,
+            name: m.name,
+            image: m.al.picUrl,
+            album: m.al.name
+          }
+          this.insertSong(song)
+          this.setFullScreen(true)
+        })
+      }
+    },
     handlePlaylist (playlist) {
       const bottom = playlist.length > 0 ? '60px' : ''
       this.$refs.recommend.style.bottom = bottom
       this.$refs.scroll.refresh()
     },
     ...mapActions([
-      'selectPlay'
+      'selectPlay',
+      'insertSong'
     ]),
     // selectbanner (item, index) {
     //   this.selectPlay({list: this.songs, index})
     // },
     ...mapMutations({
-      setDisc: 'SET_DISC'
+      setDisc: 'SET_DISC',
+      setFullScreen: 'SET_FULLSCREEN'
     }),
     selectItem (item) {
       this.$router.push({
