@@ -282,6 +282,7 @@ export default {
       // 可以播放 songReady置为true
       this.songReady = true
     },
+    // todo:优化 点击跳转到歌手页
     tosinger () {
       if (this.singerId) { this.setFullScreen(false) } else {
         this.$router.push({

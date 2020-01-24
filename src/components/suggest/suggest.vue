@@ -27,6 +27,10 @@
   </Scroll>
    <loading v-show="showMore" class="loading-content"></loading>
 </ul>
+<div class="noresult-wrapper">
+  <noresult v-show="!this.suggest.artists && !this.suggest.songs" title="臣妾搜不到啊"></noresult>
+</div>
+
 </div>
 </template>
 <script>
@@ -35,6 +39,7 @@ import {getSearchSongs, getSearchSuggest, getSongDetail} from '../../api/search'
 import {createRecommendSong} from '../../common/js/song'
 import loading from '../base/loading/loadingpluss'
 import Singer from '../../common/js/singer'
+import noresult from '../base/no-result/no-result'
 export default {
   name: 'suggest',
   props: {
@@ -55,7 +60,7 @@ export default {
     }
   },
 
-  components: {Scroll, loading},
+  components: {Scroll, loading, noresult},
 
   computed: {
     listCls () {
@@ -221,4 +226,9 @@ export default {
         top 30%
         right 0
         transform translate3d(0,-40%,0)
+  .noresult-wrapper
+    position absolute
+    top 50%
+    transform translateY(-50%)
+    width 100%
 </style>

@@ -10,6 +10,7 @@
              v-if="banner.length">
           <slider>
             <div v-for="(item, index) in banner"
+            @click.stop=" selectBanner(item)"
                  :key="index">
               <!-- 添加needsclcik 阻止冲突 -->
               <img class="needsclick"

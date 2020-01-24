@@ -6,7 +6,7 @@
   </div>
 </template>
 <script>
-
+import {debounce} from '../../../common/js/util'
 export default {
   name: 'search-box',
   props: {
@@ -21,9 +21,9 @@ export default {
     }
   },
   created () {
-    this.$watch('query', (val) => {
+    this.$watch('query', debounce((val) => {
       this.$emit('query', val)
-    })
+    }, 300))
   },
   components: {},
 
