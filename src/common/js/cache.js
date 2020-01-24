@@ -1,108 +1,56 @@
 import storage from 'good-storage'
+// *保存搜索结果到localstorage的思路：
+//* 1.使用第三方库`good-storage`操作localstorage
+//* 2.将query传入 定义key值 storage的最大储存长度
+//* 3.定义一个插入元素到数组的逻辑（如果之前没有query 就return 如果有 就删除index元素 插入到第一个  如果当前数组操过最大存储量就prop元素）
 
-const SEARCH_KEY = '__search__'
-const SEARCH_MAX_LEN = 15
+// ! storage用法
+// import storage from 'good-storage'
+//  // localStorage
+//  storage.set(key,val)
+//  storage.get(key, def)
+//  // sessionStorage
+//  storage.session.set(key, val)
+//  storage.session.get(key, val)
 
-const PLAY_KEY = '__play__'
-const PLAY_MAX_LEN = 200
+const SEARCH_KEY = '_search_'
+const SEARCH_MAX_LENGTH = 8
 
-const FAVORITE_KEY = '__favorite__'
-const FAVORITE_MAX_LEN = 200
-
-function insertArray (arr, val, compare, maxLen) {
+const insertArray = (arr, val, compare, maxlen) => {
   const index = arr.findIndex(compare)
   if (index === 0) {
     return
   }
   if (index > 0) {
+    // 删除之前的记录
     arr.splice(index, 1)
   }
   arr.unshift(val)
-  if (maxLen && arr.length > maxLen) {
+  if (maxlen && arr.length > maxlen) {
     arr.pop()
   }
 }
-
-function deleteFromArray (arr, compare) {
-  const index = arr.findIndex(compare)
-  if (index > -1) {
-    arr.splice(index, 1)
+export const saveSearch = (query) => {
+  // 读数据 默认值[]
+  let searches = storage.get(SEARCH_KEY, [])
+  if (query === '') {
+    return
   }
-}
-
-export function saveSearch (query) {
-  let searches = storage.get(SEARCH_KEY, [])
-  insertArray(
-    searches,
-    query,
-    item => {
-      return item === query
-    },
-    SEARCH_MAX_LEN
-  )
-  storage.set(SEARCH_KEY, searches)
-  return searches
-}
-
-export function deleteSearch (query) {
-  let searches = storage.get(SEARCH_KEY, [])
-  deleteFromArray(searches, item => {
+  insertArray(searches, query, (item) => {
     return item === query
-  })
+  }, SEARCH_MAX_LENGTH)
   storage.set(SEARCH_KEY, searches)
   return searches
 }
 
-export function clearSearch () {
-  storage.remove(SEARCH_KEY)
-  return []
-}
+// 保证取到的第一个第一个history是从localstorage里面拿的 而不是写死的[]
 
-export function loadSearch () {
+export function localstorage () {
   return storage.get(SEARCH_KEY, [])
 }
 
-export function savePlay (song) {
-  let songs = storage.get(PLAY_KEY, [])
-  insertArray(
-    songs,
-    song,
-    item => {
-      return song.id === item.id
-    },
-    PLAY_MAX_LEN
-  )
-  storage.set(PLAY_KEY, songs)
-  return songs
-}
-
-export function loadPlay () {
-  return storage.get(PLAY_KEY, [])
-}
-
-export function saveFavorite (song) {
-  let songs = storage.get(FAVORITE_KEY, [])
-  insertArray(
-    songs,
-    song,
-    item => {
-      return song.id === item.id
-    },
-    FAVORITE_MAX_LEN
-  )
-  storage.set(FAVORITE_KEY, songs)
-  return songs
-}
-
-export function deleteFavorite (song) {
-  let songs = storage.get(FAVORITE_KEY, [])
-  deleteFromArray(songs, item => {
-    return item.id === song.id
-  })
-  storage.set(FAVORITE_KEY, songs)
-  return songs
-}
-
-export function loadFavorite () {
-  return storage.get(FAVORITE_KEY, [])
+// 定义清空localstorage的方法
+export const clearStorage = () => {
+  storage.remove(SEARCH_KEY)
+  return []
 }

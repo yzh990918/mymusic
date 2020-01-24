@@ -1,4 +1,5 @@
 import {playMode} from '../common/js/config'
+import {localstorage} from '../common/js/cache'
 const state = {
   singer: {},
   playing: false, // 播放暂停
@@ -9,6 +10,7 @@ const state = {
   currentIndex: -1, // 当前播放的歌曲下标
   singerId: null,
   disc: {},
-  topList: {}
+  topList: {},
+  searchhistory: localstorage()
 }
 export default state

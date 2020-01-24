@@ -19,6 +19,7 @@
 
 <script>
 import {gethotsearch} from '../../../api/search'
+import {mapActions} from 'vuex'
 export default {
   name: '',
   props: [''],
@@ -41,6 +42,9 @@ export default {
   mounted () {},
 
   methods: {
+    ...mapActions([
+      'saveSearchHistory'
+    ]),
     _getHotlist () {
       gethotsearch().then((res) => {
         this.hotsearchList = res.data.data
@@ -49,6 +53,7 @@ export default {
       })
     },
     addquery (item) {
+      this.saveSearchHistory(item)
       this.$emit('addquery', item)
     }
   },
