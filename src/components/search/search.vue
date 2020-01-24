@@ -13,8 +13,8 @@
         </ul>
       </div>
    <div class="shortcut-warpper" :class="topcls" v-show="!query" ref="search">
-    <Scroll class="shortcut"  ref="scroll">
-   <hotsearch @addquery="addinput"></hotsearch>
+    <Scroll class="shortcut"  ref="scroll" :data="data">
+   <hotsearch @refresh="refreshScroll" @addquery="addinput"></hotsearch>
    </Scroll>
    </div>
    <div class="search-result" v-show="query"> <suggest @beforescroll="blurinput" @select="selectItem" @selectList="selectList" :query="query"></suggest></div>
@@ -38,7 +38,8 @@ export default {
     return {
       query: '',
       searches: [],
-      top: ''
+      top: '',
+      data: []
     }
   },
 
@@ -65,6 +66,9 @@ export default {
   },
 
   methods: {
+    refreshScroll (item) {
+      this.data = item
+    },
     addquery (item) {
       this.$refs.searchbox.add(item)
     },

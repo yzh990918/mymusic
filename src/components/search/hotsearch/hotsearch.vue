@@ -1,5 +1,5 @@
 <template>
-  <div class="hot-search">
+<div class="hot-search">
 <p class="title">热搜榜</p>
 <ul>
   <li @click="addquery(item.searchWord)" class="hot-search-list" v-for="(item,index) in hotsearchList" :key="index">
@@ -55,6 +55,7 @@ export default {
     addquery (item) {
       this.saveSearchHistory(item)
       this.$emit('addquery', item)
+      this.$emit('refresh', this.hotsearchList)
     }
   },
 
