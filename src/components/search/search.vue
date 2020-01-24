@@ -8,7 +8,7 @@
    <hotsearch @addquery="addinput"></hotsearch>
    </Scroll>
    </div>
-   <div class="search-result" v-show="query"> <suggest @select="selectItem" @selectList="selectList" :query="query"></suggest></div>
+   <div class="search-result" v-show="query"> <suggest @beforescroll="blurinput" @select="selectItem" @selectList="selectList" :query="query"></suggest></div>
    <router-view></router-view>
   </div>
 </template>
@@ -38,6 +38,9 @@ export default {
   mounted () {},
 
   methods: {
+    blurinput () {
+      this.$refs.searchbox.blur()
+    },
     ...mapActions([
       'insertSong'
     ]),

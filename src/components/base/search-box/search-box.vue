@@ -39,6 +39,9 @@ export default {
     },
     add (query) {
       this.query = query
+    },
+    blur () {
+      this.$refs.query.blur()
     }
   },
 

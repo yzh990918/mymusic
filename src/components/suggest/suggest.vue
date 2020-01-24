@@ -10,7 +10,7 @@
   </div>
 <ul class="suggest-list" v-if="suggest.songs">
   <p class="title">单曲列表</p>
-  <Scroll @scrollToEnd="searchMore" class="list"
+  <Scroll @scrollToEnd="searchMore" class="list" @beforeScroll="beforescroll" :beforeScroll="true"
   ref="scroll"
   :class="listCls" :pullup="true" :data="songs">
     <div>
@@ -79,6 +79,9 @@ export default {
   },
 
   methods: {
+    beforescroll () {
+      this.$emit('beforescroll')
+    },
     selectSinger (item) {
       const singer = new Singer({
         id: item.id,
