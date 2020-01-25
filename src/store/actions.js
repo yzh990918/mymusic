@@ -72,3 +72,32 @@ export const saveSearchHistory = ({commit}, query) => {
 export const clearSearchHistory = ({commit}) => {
   commit(types.SET_SEARCH_HISTORY, clearStorage)
 }
+
+// 从playlist删除一首歌曲
+export const deleteSong = ({commit, state}, song) => {
+  let playlist = state.playlist.slice()
+  let sequencelist = state.sequencelist.slice()
+  let currentIndex = state.currentIndex
+  let deleteIndex = findIndex(playlist, song)
+  playlist.splice(deleteIndex, 1)
+  let sIndex = findIndex(sequencelist, song)
+  sequencelist.splice(sIndex, 1)
+  // 如果删除歌曲在播放歌曲前面 或者最后一个了 currentIndex--
+  if (currentIndex > deleteIndex || currentIndex === playlist.length) {
+    currentIndex--
+  }
+  commit(types.SET_PLAYLIST, playlist)
+  commit(types.SET_SEQUENCE, sequencelist)
+  commit(types.SET_CURRENTINDEX, currentIndex)
+  // 当删除完了的情况 播放停止
+  const overdelete = playlist.length > 0
+  commit(types.SET_PLAYING, overdelete)
+}
+
+// 清空歌曲列表
+export const clearplaylist = ({commit}) => {
+  commit(types.SET_PLAYLIST, [])
+  commit(types.SET_CURRENTINDEX, -1)
+  commit(types.SET_SEQUENCE, [])
+  commit(types.SET_PLAYING, false)
+}

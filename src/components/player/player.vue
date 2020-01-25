@@ -101,17 +101,18 @@
     </progresscircle>
 </div>
   <div class="control">
-    <i class="icon-playlist"></i>
+    <i class="icon-playlist" @click.stop="showplaylist"></i>
   </div>
 </div>
  </transition>
+ <playlist @clear="clearlist" @delete="deletePlaylist" @changemode ="changeMode" @select="selectSong" ref="playlist"></playlist>
 <audio autoplay  ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
 <script>
 import animations from 'create-keyframe-animation'
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import {getMusic} from '../../api/singer'
 import progressbar from '../progress-bar/progress-bar'
 import progresscircle from '../progress-circle/progresscircle'
@@ -121,6 +122,7 @@ import {getLyric} from '../../api/lyric'
 import Lyric from 'lyric-parser'
 import Scroll from '../base/scroll/scroll'
 import {prefixStyle} from '../../common/js/dom'
+import playlist from '../playlist/playlist'
 const transform = prefixStyle('transform')
 const transitionDuration = prefixStyle('transitionDuration')
 export default {
@@ -143,11 +145,11 @@ export default {
   components: {
     progressbar,
     progresscircle,
-    Scroll
+    Scroll,
+    playlist
   },
 
   computed: {
-
     precent () {
       return this.currentTime / this.songsTime
     },
@@ -186,6 +188,25 @@ export default {
     this.touch = {}
   },
   methods: {
+    clearlist () {
+      this.clearplaylist()
+    },
+    ...mapActions([
+      'deleteSong',
+      'clearplaylist'
+    ]),
+    deletePlaylist (item) {
+      setTimeout(() => {
+        this.deleteSong(item)
+      }, 20)
+    },
+    selectSong (index) {
+      this.setCurrentindex(index)
+      this.setPlaying(true)
+    },
+    showplaylist () {
+      this.$refs.playlist.show()
+    },
     firstPlay () {
       this.$refs.audio.play()
     },
@@ -479,6 +500,9 @@ export default {
   },
   watch: {
     currentSong (newSong, oldSong) {
+      if (!newSong.id) {
+        return
+      }
       if (newSong.id === oldSong.id) {
         return
       }

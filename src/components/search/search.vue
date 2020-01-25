@@ -19,7 +19,7 @@
    </div>
    <div class="search-result" v-show="query"> <suggest @beforescroll="blurinput" @select="selectItem" @selectList="selectList" :query="query"></suggest></div>
 <confirm ref="confirm" @confirm ="clearSearchHistory" text="是否清空历史搜索记录" confirmBtnText="清空"></confirm>
-   <router-view></router-view>
+    <router-view></router-view>
   </div>
 </template>
 <script>
@@ -42,9 +42,7 @@ export default {
       data: []
     }
   },
-
   components: {searchbox, hotsearch, suggest, Scroll, confirm},
-
   computed: {
     ...mapGetters([
       'searchhistory'
@@ -64,7 +62,6 @@ export default {
   beforeMount () {},
   mounted () {
   },
-
   methods: {
     refreshScroll (item) {
       this.data = item
