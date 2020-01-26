@@ -16,6 +16,9 @@ import storage from 'good-storage'
 const SEARCH_KEY = '_search_'
 const SEARCH_MAX_LENGTH = 8
 
+const PLAY_KEY = '_play_'
+const PLAY_MAX_LENGTH = 200
+
 const insertArray = (arr, val, compare, maxlen) => {
   const index = arr.findIndex(compare)
   if (index === 0) {
@@ -30,6 +33,13 @@ const insertArray = (arr, val, compare, maxlen) => {
     arr.pop()
   }
 }
+
+function deleterecord (arr, compare) {
+  const index = arr.findIndex(compare)
+  if (index > -1) {
+    arr.splice(index, 1)
+  }
+}
 export const saveSearch = (query) => {
   // 读数据 默认值[]
   let searches = storage.get(SEARCH_KEY, [])
@@ -39,6 +49,15 @@ export const saveSearch = (query) => {
   insertArray(searches, query, (item) => {
     return item === query
   }, SEARCH_MAX_LENGTH)
+  storage.set(SEARCH_KEY, searches)
+  return searches
+}
+// 删除一条历史搜索记录
+export const deletehistory = (query) => {
+  let searches = storage.get(SEARCH_KEY, [])
+  deleterecord(searches, (item) => {
+    return item === query
+  })
   storage.set(SEARCH_KEY, searches)
   return searches
 }
@@ -53,4 +72,19 @@ export function localstorage () {
 export const clearStorage = () => {
   storage.remove(SEARCH_KEY)
   return []
+}
+
+// 添加歌曲到storage 保存播放历史
+export const savePlayHistory = (song) => {
+  let songs = storage.get(PLAY_KEY, [])
+  insertArray(songs, song, (item) => {
+    return song.id === item.id
+  }, PLAY_MAX_LENGTH)
+  storage.set(PLAY_KEY, songs)
+  return songs
+}
+
+// 加载本地歌曲
+export function loadPlay () {
+  return storage.get(PLAY_KEY, [])
 }

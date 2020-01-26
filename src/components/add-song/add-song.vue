@@ -11,19 +11,31 @@
       <searchbox ref="searchbox" placeholder="搜索歌曲" @query="receivequery"></searchbox>
     </div>
     <div class="shortcut" v-show="!query">
-<switches :switches="switches" @switch="switchItem" :currentIndex="currentIndex"></switches>
+<Select :switches="switches" @select ="changeCurrentIndex" :currentIndex="currentIndex"></Select>
 <div class="list-wrapper">
-<scroll>
+<scroll ref="playhistory" :data="playhistory" class="list-scroll"  v-if="currentIndex===0">
   <div class="list-inner">
-<songlist :select="selectSong">
+<songlist :songs="playhistory" @select="selectHistory">
 </songlist>
+  </div>
+</scroll>
+<scroll ref="searchhistory" :data="searchhistory" class="list-scroll"   v-if="currentIndex===1">
+  <div class="list-inner">
+    <searchlist @select="addinput" @delete="deleterecord" :searches="searchhistory">
+</searchlist>
   </div>
 </scroll>
 </div>
     </div>
-<div class="search-result">
-  <suggest @select="selectItem" @selectList="selectList" :showSinger="false" :query="query" v-show="query"></suggest>
+<div class="search-result" v-show="query">
+  <suggest @select="selectItem" @selectList="selectList" :showSinger="false" :query="query"></suggest>
 </div>
+<toptip ref="toptip" class="toptip">
+  <div class="title">
+     <i class="icon-ok"></i>
+    <span class="text">添加播放列表成功</span>
+  </div>
+</toptip>
   </div>
   </transition>
 </template>
@@ -31,10 +43,12 @@
 <script>
 import searchbox from '../base/search-box/search-box'
 import suggest from '../suggest/addSong-suggest'
-import {mapActions, mapMutations} from 'vuex'
-import switches from '../base/switches/switches'
+import {mapActions, mapMutations, mapGetters} from 'vuex'
+import Select from '../base/switches/switches'
 import scroll from '../base/scroll/scroll'
 import songlist from '../base/songlist/songlist'
+import searchlist from '../base/search-list/search-list'
+import toptip from '../base/top-tip/top-tip'
 export default {
   name: 'add-song',
   props: [''],
@@ -51,25 +65,42 @@ export default {
     }
   },
 
-  components: {searchbox, suggest, switches, scroll, songlist},
+  components: {searchbox, suggest, Select, scroll, songlist, searchlist, toptip},
   created () {},
 
-  computed: {},
+  computed: {
+    ...mapGetters([
+      'playhistory',
+      'searchhistory'
+    ])
+  },
 
   beforeMount () {},
 
-  mounted () {},
+  mounted () {
+  },
 
   methods: {
+    addinput (item) {
+      this.$refs.searchbox.add(item)
+    },
+    deleterecord (query) {
+      this.deleteSearchHitory(query)
+    },
     ...mapMutations({
       setSinger: 'SET_SINGER'
     }),
     ...mapActions([
       'insertSong',
-      'saveSearchHistory'
+      'saveSearchHistory',
+      'deleteSearchHitory'
     ]),
     show () {
       this.showFlag = true
+      setTimeout(() => {
+        this.$refs.playhistory.refresh()
+        this.$refs.searchhistory.refresh()
+      }, 20)
     },
     hide () {
       this.showFlag = false
@@ -87,9 +118,14 @@ export default {
     selectList (item) {
       this.insertSong(item)
       this.saveSearchHistory(item.name)
+      this.$refs.toptip.show()
     },
-    switchItem (index) {
+    changeCurrentIndex (index) {
       this.currentIndex = index
+    },
+    selectHistory (song, index) {
+      this.insertSong(song)
+      this.$refs.toptip.show()
     }
   },
 
@@ -131,9 +167,33 @@ export default {
         color $color-theme
   .search-box-wrapper
     margin 20px
+  .shortcut
+    .list-wrapper
+      position absolute
+      top 165px
+      bottom 0
+      width 100%
+      .list-scroll
+        height 100%
+        overflow hidden
+        .list-inner
+          padding 20px 30px
   .search-result
     position fixed
     top 114px
     bottom 0
     width 100%
+  .toptip
+    .title
+      text-align center
+      padding 18px 0
+      font-size 0
+      .icon-ok
+        font-size $font-size-medium
+        color $color-theme
+        margin-right 4px
+      .text
+        font-size $font-size-medium
+        color $color-text
+
 </style>

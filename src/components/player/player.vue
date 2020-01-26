@@ -106,7 +106,7 @@
 </div>
  </transition>
  <playlist @clear="clearlist" @delete="deletePlaylist" @changemode ="changeMode" @select="selectSong" ref="playlist"></playlist>
-<audio autoplay  ref="audio" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
+<audio autoplay  ref="audio" @play="ready" @canplay="getDuration" @error="error" :src="songsUrl" @timeupdate="UpdateTime" @ended="End"></audio>
   </div>
 </template>
 
@@ -188,12 +188,17 @@ export default {
     this.touch = {}
   },
   methods: {
+    ready () {
+      this.songReady = true
+      this.saveHistory(this.currentSong)
+    },
     clearlist () {
       this.clearplaylist()
     },
     ...mapActions([
       'deleteSong',
-      'clearplaylist'
+      'clearplaylist',
+      'saveHistory'
     ]),
     deletePlaylist (item) {
       setTimeout(() => {

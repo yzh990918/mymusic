@@ -1,5 +1,5 @@
 import {playMode} from '../common/js/config'
-import {localstorage} from '../common/js/cache'
+import {localstorage, loadPlay} from '../common/js/cache'
 const state = {
   singer: {},
   playing: false, // 播放暂停
@@ -11,6 +11,7 @@ const state = {
   singerId: null,
   disc: {},
   topList: {},
-  searchhistory: localstorage()
+  searchhistory: localstorage(),
+  playhistory: loadPlay()
 }
 export default state
