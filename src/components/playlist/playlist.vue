@@ -26,7 +26,7 @@
   <div class="list-operate">
     <div class="add">
       <i class="icon-add"></i>
-      <span class="text">添加歌曲至队列</span>
+      <span class="text" @click="addSong">添加歌曲至队列</span>
     </div>
   </div>
   <div class="hide" @click="hide">
@@ -34,6 +34,7 @@
   </div>
 </div>
 <confirm text="是否清空播放列表" ref="confirm" @confirm="clearlist"></confirm>
+<addSong ref="addsong"></addSong>
   </div>
 </transition>
 </template>
@@ -43,6 +44,7 @@ import {mapGetters, mapMutations} from 'vuex'
 import Scroll from '../base/scroll/scroll'
 import {playMode} from '../../common/js/config'
 import confirm from '../base/confirm/confirm'
+import addSong from '../add-song/add-song'
 export default {
   name: 'playlist',
   props: [''],
@@ -53,7 +55,7 @@ export default {
     }
   },
 
-  components: {Scroll, confirm},
+  components: {Scroll, confirm, addSong},
   created () {},
 
   computed: {
@@ -82,6 +84,9 @@ export default {
   mounted () {},
 
   methods: {
+    addSong () {
+      this.$refs.addsong.show()
+    },
     showconfirm () {
       this.$refs.confirm.show()
     },

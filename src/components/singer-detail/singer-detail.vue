@@ -93,7 +93,7 @@ export default {
   background-color:$color-background
   &.change-enter-active, &.change-leave-active
     transition: all 0.3s
-  &.change-enter, &.change-leave-to
+  &.change-enter, &.change-leave-active
     transform: translate3d(100%, 0, 0)
 
 </style>
