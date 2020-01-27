@@ -34,7 +34,7 @@
 <script>
 import Select from '../base/switches/switches'
 import Scroll from '../base/scroll/scroll'
-import songlist from '../base/songlist/user-songlist'
+import songlist from '../base/songlist/songlist'
 import {mapGetters, mapActions} from 'vuex'
 import {playlistMixin} from '../../common/js/mixin'
 export default {

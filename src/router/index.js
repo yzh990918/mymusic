@@ -1,14 +1,47 @@
 import Vue from 'vue'
 import Router from 'vue-router'
-import Recommend from '../components/recommend/recommend'
-import rank from '../components/rank/rank'
-import singer from '../components/singer/singer'
-import search from '../components/search/search'
-import SingerDetail from '../components/singer-detail/singer-detail'
-import disc from '../components/Disc/disc'
-import rankdetail from '../components/rank-detail/rank-detail'
-import User from '../components/user/user'
 Vue.use(Router)
+// 路由懒加载
+const Recommend = (resolve) => {
+  import('../components/recommend/recommend').then((module) => {
+    resolve(module)
+  })
+}
+const rank = (resolve) => {
+  import('../components/rank/rank.vue').then((module) => {
+    resolve(module)
+  })
+}
+const singer = (resolve) => {
+  import('../components/singer/singer.vue').then((module) => {
+    resolve(module)
+  })
+}
+const search = (resolve) => {
+  import('../components/search/search.vue').then((module) => {
+    resolve(module)
+  })
+}
+const SingerDetail = (resolve) => {
+  import('../components/singer-detail/singer-detail.vue').then((module) => {
+    resolve(module)
+  })
+}
+const disc = (resolve) => {
+  import('../components/Disc/disc.vue').then((module) => {
+    resolve(module)
+  })
+}
+const rankdetail = (resolve) => {
+  import('../components/rank-detail/rank-detail.vue').then((module) => {
+    resolve(module)
+  })
+}
+const User = (resolve) => {
+  import('../components/user/user.vue').then((module) => {
+    resolve(module)
+  })
+}
 export default new Router({
   routes: [
     // {
