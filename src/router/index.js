@@ -7,12 +7,16 @@ import search from '../components/search/search'
 import SingerDetail from '../components/singer-detail/singer-detail'
 import disc from '../components/Disc/disc'
 import rankdetail from '../components/rank-detail/rank-detail'
+import User from '../components/user/user'
 Vue.use(Router)
-// todo: 最终页面我喜欢页面开发
 export default new Router({
   routes: [
+    // {
+    //   // 配置默认根路径
+    //   path: '/',
+    //   redirect: '/recommend'
+    // },
     {
-      // 配置默认根路径
       path: '/',
       redirect: '/recommend'
     },
@@ -59,6 +63,11 @@ export default new Router({
         }
       ]
 
+    },
+    {
+      path: '/user',
+      name: 'User',
+      component: User
     }
   ]
 })

@@ -28,3 +28,5 @@ export const topList = state => state.topList
 export const searchhistory = state => state.searchhistory
 
 export const playhistory = state => state.playhistory
+
+export const favoriatelist = state => state.favoriatelist

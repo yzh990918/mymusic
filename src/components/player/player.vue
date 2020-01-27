@@ -80,7 +80,7 @@
         <i @click="next" class="icon-next"></i>
       </div>
       <div class="icon i-right">
-        <i class="icon icon-not-favorite"></i>
+        <i class="icon" :class="getFavoriteIcon(currentSong)"  @click="toggleFavoriate(currentSong)"></i>
       </div>
     </div>
   </div>
@@ -173,7 +173,8 @@ export default {
       'playing',
       'currentIndex',
       'mode',
-      'sequencelist'
+      'sequencelist',
+      'favoriatelist'
     ]),
     iconMode () {
       return this.mode === playMode.sequence ? 'icon-sequence' : this.mode === playMode.loop ? 'icon-loop' : 'icon-random'
@@ -188,6 +189,25 @@ export default {
     this.touch = {}
   },
   methods: {
+    isFavoriate (song) {
+      const index = this.favoriatelist.findIndex((item) => {
+        return item.id === song.id
+      })
+      return index > -1
+    },
+    toggleFavoriate (song) {
+      if (this.isFavoriate(song)) {
+        this.deletefavoriate(song)
+      } else {
+        this.addfavoriate(song)
+      }
+    },
+    getFavoriteIcon (song) {
+      if (this.isFavoriate(song)) {
+        return 'icon-favorite'
+      }
+      return 'icon-not-favorite'
+    },
     ready () {
       this.songReady = true
       this.saveHistory(this.currentSong)
@@ -198,7 +218,9 @@ export default {
     ...mapActions([
       'deleteSong',
       'clearplaylist',
-      'saveHistory'
+      'saveHistory',
+      'addfavoriate',
+      'deletefavoriate'
     ]),
     deletePlaylist (item) {
       setTimeout(() => {
@@ -693,7 +715,7 @@ export default {
         .i-right
           text-align left
         .icon-favorite
-          color:$color-sub-theme
+          color $color-sub-theme
       .progress-wrapper
         display flex
         align-items center

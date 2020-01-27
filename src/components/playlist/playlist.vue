@@ -14,8 +14,9 @@
     <li ref="items" class="item" v-for="(item,index) of sequencelist " :key="index" @click="selectItem(item,index)">
       <i class="current" :class="Isplaying(item)"></i>
       <span class="text" :class="IsplayingText (item)">{{item.name}}</span>
-      <span class="like">
-        <i class="icon-not-favorite"></i>
+      <span class="like" @click.stop>
+        <i :class="getFavoriteIcon(item)"
+        ></i>
       </span>
       <span class="delete"  @click.stop="deleteitem(item)">
         <i class="icon-delete"  ></i>
@@ -40,12 +41,14 @@
 </template>
 
 <script>
-import {mapGetters, mapMutations} from 'vuex'
+import {mapGetters, mapMutations, mapActions} from 'vuex'
 import Scroll from '../base/scroll/scroll'
 import {playMode} from '../../common/js/config'
 import confirm from '../base/confirm/confirm'
 import addSong from '../add-song/add-song'
+import {playerMixin} from '../../common/js/mixin'
 export default {
+  mixins: [playerMixin],
   name: 'playlist',
   props: [''],
   data () {
@@ -59,11 +62,16 @@ export default {
   created () {},
 
   computed: {
+    ...mapActions([
+      'deletefavoriate',
+      'addfavoriate'
+    ]),
     ...mapGetters([
       'sequencelist',
       'currentSong',
       'mode',
-      'playlist'
+      'playlist',
+      'favoriatelist'
     ]),
     ...mapMutations({
       setCurrentIndex: 'SET_CURRENTINDEX',
@@ -227,6 +235,8 @@ export default {
           margin-right 15px
           font-size $font-size-medium
           color $color-theme
+        .icon-favorite
+          color $color-sub-theme
         .delete
           extend-click()
           margin-right auto

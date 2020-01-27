@@ -2,7 +2,7 @@
   <div class="m-header">
     <div class="icon"></div>
     <div class="text">Magic music</div>
-    <router-link tag="div" class="user" to="#">
+    <router-link tag="div" class="user" to="/user">
       <i class="icon-mine"></i>
     </router-link>
   </div>
@@ -24,7 +24,8 @@ export default {
 
   mounted () {},
 
-  methods: {},
+  methods: {
+  },
 
   watch: {}
 }

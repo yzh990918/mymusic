@@ -124,6 +124,7 @@ export default {
       this.currentIndex = index
     },
     selectHistory (song, index) {
+      console.log(song)
       this.insertSong(song)
       this.$refs.toptip.show()
     }

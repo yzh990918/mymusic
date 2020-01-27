@@ -19,6 +19,9 @@ const SEARCH_MAX_LENGTH = 8
 const PLAY_KEY = '_play_'
 const PLAY_MAX_LENGTH = 200
 
+const FAV_KEY = '_FAV_'
+const FAV_MAX_LENGTH = 200
+
 const insertArray = (arr, val, compare, maxlen) => {
   const index = arr.findIndex(compare)
   if (index === 0) {
@@ -87,4 +90,26 @@ export const savePlayHistory = (song) => {
 // 加载本地歌曲
 export function loadPlay () {
   return storage.get(PLAY_KEY, [])
+}
+// 我喜欢
+export const saveFavoriatelist = (song) => {
+  let songs = storage.get(FAV_KEY, [])
+  insertArray(songs, song, (item) => {
+    return song.id === item.id
+  }, FAV_MAX_LENGTH)
+  storage.set(FAV_KEY, songs)
+  return songs
+}
+// 我不喜欢
+export const deleteFavoriatelist = (song) => {
+  let songs = storage.get(FAV_KEY, [])
+  deleterecord(songs, (item) => {
+    return item.id === song.id
+  })
+  storage.set(FAV_KEY, songs)
+  return songs
+}
+// 读取收藏 vuex数据初始化
+export function loadFavoriate () {
+  return storage.get(FAV_KEY, [])
 }
