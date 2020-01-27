@@ -86,6 +86,7 @@ export default {
     back () {
       this.$router.back()
     },
+    // todo:解决点击bug  报堆栈异常bug
     selectItem (song, index) {
       this.insertSong(song)
     },
