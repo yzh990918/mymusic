@@ -61,7 +61,7 @@ export default {
       // })
 
       getSingerDetail(this.singer.id).then((res) => {
-        this.node = res.data.hotSongs
+        this.node = res.data.body.hotSongs
         // console.log(this.songs)
       })
     },

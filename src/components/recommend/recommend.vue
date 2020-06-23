@@ -16,7 +16,7 @@
               <img class="needsclick"
                    width="100%"
                    @load="loadimage"
-                   :src="item.picUrl"
+                   :src="item.imageUrl"
                    alt="" />
             </div>
           </slider>
@@ -130,12 +130,12 @@ export default {
     },
     _getcommend () {
       getBanner().then(res => {
-        this.banner = res.data.banners
+        this.banner = res.data.body.banners
         // console.log(res.data.banners)
       })
       setTimeout(() => {
         getRecommendlist().then(res => {
-          this.recommendsList = res.data.playlists
+          this.recommendsList = res.data.body.playlists
           console.log(this.recommendsList)
         })
       }, 1500)

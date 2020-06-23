@@ -51,7 +51,7 @@ export default {
         return
       }
       getRecommendlistDetail(this.disc.id).then((res) => {
-        this.node = res.data.result.tracks
+        this.node = res.data.body.result.tracks
       }).then(() => {
         this.node = this._normalizeSong(this.node)
       })

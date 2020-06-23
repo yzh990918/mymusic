@@ -59,7 +59,7 @@ export default {
           // if (res.code === ERR_OK) {
           //   this.singers = this._normallizeSinger(res.data.artists)
           // }
-          let s = res.data.list.artists
+          let s = res.data.body.list.artists
           //! 用pinyin依赖包将singername的首字母提炼出来作为item.initial 接下来就是封装数据为热门 和常规区域
           s.map((item) => {
             let py = pinyin(item.name[0], {

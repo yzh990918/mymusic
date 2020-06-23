@@ -1,6 +1,6 @@
 import axios from 'axios'
 export function gethotsearch () {
-  const url = `https://music.linkorg.club/search/hot/detail`
+  const url = `https://neteasemusic.yangxiansheng.top/search/hot/detail`
   return axios.get(url)
 }
 // 获取搜索建议

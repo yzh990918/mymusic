@@ -93,17 +93,17 @@ export default {
     },
     selectList (item) {
       getSongDetail(item.id).then((res) => {
-        item.image = res.data.songs[0].al.picUrl
+        item.image = res.data.body.songs[0].al.picUrl
       })
       this.$emit('selectList', item)
     },
     search () {
       console.log('首次搜索' + this.showMore)
       getSearchSongs(this.query, this.page).then((res) => {
-        if (!res.data.result.songs.length) {
+        if (!res.data.body.result.songs.length) {
           this.showMore = false
         }
-        let list = res.data.result.songs
+        let list = res.data.body.result.songs
         let ret = []
         list.forEach((item) => {
           ret.push(createRecommendSong(item))
@@ -111,7 +111,7 @@ export default {
         this.songs = ret
       })
       getSearchSuggest(this.query).then((res) => {
-        this.suggest = res.data.result
+        this.suggest = res.data.body.result
       })
     },
     searchMore () {
@@ -122,8 +122,8 @@ export default {
         return
       }
       getSearchSongs(this.query, this.page).then((res) => {
-        let list = res.data.result.songs
-        if (!res.data.result.songs) {
+        let list = res.data.body.result.songs
+        if (!list.length) {
           this.showMore = false
         }
         let ret = []

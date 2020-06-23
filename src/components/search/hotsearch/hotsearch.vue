@@ -47,7 +47,7 @@ export default {
     ]),
     _getHotlist () {
       gethotsearch().then((res) => {
-        this.hotsearchList = res.data.data
+        this.hotsearchList = res.data.body.data
       }).catch((error) => {
         console.log(error)
       })

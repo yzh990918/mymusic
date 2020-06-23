@@ -447,7 +447,7 @@ export default {
     _getLyric (id) {
       getLyric(id).then((res) => {
         // 调用第三方库 将currentLyric转化为一个time-text对象
-        this.currentLyric = new Lyric(res.data.lrc.lyric, this.handleLyric)
+        this.currentLyric = new Lyric(res.data.body.lrc.lyric, this.handleLyric)
         if (this.playing) {
           this.currentLyric.play()
         }
@@ -536,7 +536,7 @@ export default {
       }
       // finished:解决ios声音bug
       getMusic(this.currentSong.id).then((res) => {
-        this.songsUrl = res.data.data[0].url
+        this.songsUrl = res.data.body.data[0].url
       })
       if (this.currentLyric) {
         this.currentLyric.stop()

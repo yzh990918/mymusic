@@ -27,7 +27,7 @@ import loading from '../base/loading/loading'
 import {getrank} from '../../api/rank'
 import {playlistMixin} from '../../common/js/mixin'
 import {mapMutations} from 'vuex'
-const YUNMUSIC_TOP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33].slice()
+const YUNMUSIC_TOP = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23].slice()
 export default {
   mixins: [playlistMixin],
   created () {
@@ -60,8 +60,8 @@ export default {
     _getTopList () {
       for (let i = 0; i < YUNMUSIC_TOP.length; i++) {
         getrank(YUNMUSIC_TOP[i]).then((res) => {
-          let list = res.data.playlist
-          list.top = res.data.playlist.tracks.slice(0, 3)
+          let list = res.data.body.playlist
+          list.top = res.data.body.playlist.tracks.slice(0, 3)
           this.toplist.push(list)
         })
       }

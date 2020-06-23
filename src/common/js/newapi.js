@@ -1,4 +1,4 @@
-export const HOST = 'http://120.79.162.149:3000'
+export const HOST = 'https://neteasemusic.yangxiansheng.top'
 export const ERR_OK = 200
 export const playMode = {
   sequence: 0,
