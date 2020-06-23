@@ -13,7 +13,7 @@
 
 > A magic Muisc WebApp powered By Vue
 
-### ✨ [Demo](http:mymusic.yangxiansheng.top)
+### ✨ [Demo](http:muisc.yangxiansheng.top)
 
 ## Prerequisites
 
