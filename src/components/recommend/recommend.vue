@@ -61,6 +61,8 @@ import loading from '../base/loading/loading'
 import { mapMutations, mapActions } from 'vuex'
 import { playlistMixin } from '../../common/js/mixin'
 import { getSongDetail } from '../../api/search'
+// // import Epub from 'epubjs'
+// global.ePub = Epub
 export default {
   mixins: [playlistMixin],
   name: 'recommend',
@@ -81,7 +83,10 @@ export default {
   computed: {},
 
   beforeMount () {},
-  mounted () {},
+  mounted () {
+    // this.book = new Epub('./2014_Book_Self-ReportedPopulationHealthA.epub')
+    // console.log(this.book)
+  },
   created () {
     this._getcommend()
   },

@@ -1,4 +1,5 @@
 import storage from 'good-storage'
+
 // *保存搜索结果到localstorage的思路：
 //* 1.使用第三方库`good-storage`操作localstorage
 //* 2.将query传入 定义key值 storage的最大储存长度

@@ -297,7 +297,7 @@ export default {
       this.$refs.cdWrapper.style['transform'] = ''
       this.$refs.cdWrapper.style.transition = ''
     },
-    // * 要做一个大图片从mini播放器飞到大图层cdWrapper的动画 使用到create-keyframe-animation第三方插键
+    // * 要做一个大图片从mini播放器飞到大图层cdWrapper的动画 使用到create-keyframe-animation第三方插件
     // ! 思路：1.计算出偏移横纵坐标 2.横轴偏移(屏幕宽度/2-min播放器左侧偏移) 3.纵轴偏移(屏幕高度-大图层paddingTop-min播放器圆心距底部位置-cdwrapper的高度/2) 4.书写动画
 
     _getPosAndScale () {
@@ -330,7 +330,8 @@ export default {
       // 可以播放 songReady置为true
       this.songReady = true
     },
-    // todo:优化 点击跳转到歌手页
+    // todo:优化 点击跳转到歌手页 优化切换歌曲歌词不同步bug 进度条bug 我喜欢部分无法点击切换歌曲bug
+    // todo: 后续重构项目 争取仿真网易云部分功能(完善歌单,个人歌单,电台,推荐,视频,个人中心等)
     tosinger () {
       if (this.singerId) { this.setFullScreen(false) } else {
         this.$router.push({
