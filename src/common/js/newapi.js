@@ -1,4 +1,4 @@
-export const HOST = 'https://neteasemusic.yangxiansheng.top'
+export const HOST = ''
 export const ERR_OK = 200
 export const playMode = {
   sequence: 0,
