@@ -5,7 +5,7 @@
 [![vue](https://img.shields.io/badge/vue-2.6.10-brightgreen.svg)](https://github.com/vuejs/vue)
 [![element-ui](https://img.shields.io/badge/element--ui-2.7.0-brightgreen.svg)](https://github.com/ElemeFE/element)
 
-[项目体验](http://music.yangxainsheng.top)
+[项目体验](http://music.yangxiansheng.top/#/recommend)
 
 >项目是用vuecli 2.9构建 用vuecli 3.x的用户自行重构部分代码
 
